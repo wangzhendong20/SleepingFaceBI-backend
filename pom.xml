@@ -4,17 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.madou</groupId>
-    <artifactId>gebi-cloud</artifactId>
+    <groupId>com.dong</groupId>
+    <artifactId>sleepingFaceBi-cloud</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>gebi-gateway</module>
-        <module>gebi-api</module>
-        <module>gebi-modules</module>
-        <module>gebi-modules/gebi-chart</module>
-        <module>gebi-modules/gebi-text</module>
-        <module>gebi-modules/gebi-service</module>
-        <module>gebi-common</module>
+        <module>sleepingFaceBi-gateway</module>
+        <module>sleepingFaceBi-api</module>
+        <module>sleepingFaceBi-modules</module>
+        <module>sleepingFaceBi-modules/sleepingFaceBi-chart</module>
+        <module>sleepingFaceBi-modules/sleepingFaceBi-text</module>
+        <module>sleepingFaceBi-modules/sleepingFaceBi-service</module>
+        <module>sleepingFaceBi-common</module>
     </modules>
 
     <packaging>pom</packaging>

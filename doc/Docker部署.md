@@ -63,7 +63,7 @@ idea连接ca证书步骤：[https://blog.csdn.net/qq_41946543/article/details/10
 
 # Create : 2023-08-03
 # Update : 2023-08-03
-# @Autor : madou
+# @Autor : dong
 
 # 服务器ip名
 SERVER="服务器ip"
@@ -76,9 +76,9 @@ STATE="sc"
 # 城市
 CITY="cd"
 # 机构名称
-ORGANIZATION="madou"
+ORGANIZATION="dong"
 # 机构单位
-ORGANIZATIONAL_UNIT="madou"
+ORGANIZATIONAL_UNIT="dong"
 # 邮箱
 EMAIL="841838856@qq.com"
 
@@ -165,9 +165,9 @@ Dockerfile-chart，其它Dockerfile类似
 ```dockerfile
 FROM openjdk:8
 VOLUME /tmp
-COPY target/*.jar gebi-text.jar
+COPY target/*.jar sleepingFaceBi-text.jar
 ENV PORT=9096
-ENTRYPOINT ["java","-jar","-Xms32m","-Xmx64m","gebi-text.jar","--spring.profiles.active=prod"]
+ENTRYPOINT ["java","-jar","-Xms32m","-Xmx64m","sleepingFaceBi-text.jar","--spring.profiles.active=prod"]
 EXPOSE $PORT
 
 ```

@@ -1,0 +1,3 @@
+com.dong.common.mq.config.MqInitMain
+com.dong.common.mq.config.MqMessageProducer
+

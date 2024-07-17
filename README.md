@@ -2,22 +2,22 @@
 ***
 开源地址
 
-[微服务框架前端代码](https://github.com/MA-douzhang/gebi-frontend/tree/dev-cloud)
+[微服务框架前端代码](https://github.com/MA-douzhang/sleepingFaceBi-frontend/tree/dev-cloud)
 
-[微服务框架后端代码](https://github.com/MA-douzhang/gebi-backend/tree/dev-cloud)
+[微服务框架后端代码](https://github.com/MA-douzhang/sleepingFaceBi-backend/tree/dev-cloud)
 
-[SpringBoot框架前端代码](https://github.com/MA-douzhang/gebi-frontend)
+[SpringBoot框架前端代码](https://github.com/MA-douzhang/sleepingFaceBi-frontend)
 
-[SpringBoot框架后端代码](https://github.com/MA-douzhang/gebi-backend)
+[SpringBoot框架后端代码](https://github.com/MA-douzhang/sleepingFaceBi-backend)
 
 ***
-当前是GeBI-Cloud项目的后端源码，主要是用于总结学习微服务的知识和利用AI实现更便捷的功能。
+当前是sleepingFaceBi-Cloud项目的后端源码，主要是用于总结学习微服务的知识和利用AI实现更便捷的功能。
 
-后端功能主要分为，三个服务模块，gebi-user（用户服务），gebi-chart（图表服务），gebi-text（文本服务）。
+后端功能主要分为，三个服务模块，sleepingFaceBi-user（用户服务），sleepingFaceBi-chart（图表服务），sleepingFaceBi-text（文本服务）。
 
 框架中整合了RabbitMQ + Sa-token + Mybatis + Redis 作为公共模块
 
-后端源码GeBi使用Spring Boot 框架，在分支中master可以查看
+后端源码sleepingFaceBi使用Spring Boot 框架，在分支中master可以查看
 ## 技术栈
 ***
 框架：Spring Cloud 
