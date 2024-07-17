@@ -20,7 +20,6 @@ spring:
         min-idle: 0
   cloud:
     nacos:
-#      server-addr: 192.168.10.151:8848 #注册中心
       server-addr: 127.0.0.1:8848 #注册中心
     gateway:
       routes:

@@ -8,9 +8,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * 网关 8099
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class sleepingFaceBiGatewayApplication {
+public class GatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(sleepingFaceBiGatewayApplication.class, args);
+        SpringApplication.run(GatewayApplication.class, args);
     }
 }

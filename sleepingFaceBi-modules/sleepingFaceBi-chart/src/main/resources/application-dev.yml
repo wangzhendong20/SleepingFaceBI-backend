@@ -90,15 +90,6 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
 
-#鱼聪明
-yuapi:
-  client:
-    access-key: 9xve2a6hz5njnxej4d6g2s7stw2msopk
-    secret-key: 6jjxn4ginp1qoqemjop7qe1gwf7w79bb
-
-tong_yi_cloud:
-  ai_api_key: sk-8152bde853e3482ab1a0b5d2a02ab70f
-  url: https://api.turingos.cn/api/v1/openapi
 
 sa-token:
   # token 名称（同时也是 cookie 名称）
