@@ -57,7 +57,7 @@ public class TextTaskServiceImpl extends ServiceImpl<TextTaskMapper, TextTask>
         ThrowUtils.throwIf(size==0,ErrorCode.PARAMS_ERROR,"文件为空");
         //校验文件后缀
         String suffix = FileUtil.getSuffix(originalFilename);
-        final List<String> validFileSuffix = Arrays.asList("txt");
+        final List<String> validFileSuffix = Arrays.asList("txt","doc","docx","md");
         ThrowUtils.throwIf(!validFileSuffix.contains(suffix),ErrorCode.PARAMS_ERROR,"文件后缀名非法");
 
         //消耗积分
@@ -75,8 +75,19 @@ public class TextTaskServiceImpl extends ServiceImpl<TextTaskMapper, TextTask>
         ThrowUtils.throwIf(!saveResult,ErrorCode.SYSTEM_ERROR,"文本任务保存失败");
 
         Long taskId = textTask.getId();
+
+        ArrayList<String> textContentList = new ArrayList<>();
         // 压缩后的数据
-        ArrayList<String> textContentList = TxtUtils.readerFile(multipartFile);
+
+        // 增加txt,doc,docx,md文件类型判断
+        if (suffix.equals("txt") || suffix.equals("md")) {
+            textContentList = TxtUtils.readerFile(multipartFile);
+        } else if (suffix.equals("doc")) {
+            textContentList = TxtUtils.readerDocxFile(multipartFile);
+        } else if (suffix.equals("docx")) {
+            textContentList = TxtUtils.readerDocxFile(multipartFile);
+        }
+
         ThrowUtils.throwIf(textContentList.size() ==0,ErrorCode.PARAMS_ERROR,"文件为空");
 
         //将分割的内容保存入记录表

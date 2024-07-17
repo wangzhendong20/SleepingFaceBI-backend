@@ -2,7 +2,6 @@ package com.dong.user.api;
 
 import com.dong.user.api.model.entity.User;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 远程用户服务 user
