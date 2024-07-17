@@ -31,6 +31,6 @@ public interface TextConstant {
     /**
      * AI模型ID
      */
-    Long MODE_ID = 1666258198769700865L;
+    Long MODE_ID = 1813437401074171905L;
     // endregion
 }

@@ -21,7 +21,7 @@ spring:
   cloud:
     nacos:
 #      server-addr: 192.168.10.151:8848 #注册中心
-      server-addr: localhost:8848 #注册中心
+      server-addr: 127.0.0.1:8848 #注册中心
     gateway:
       routes:
         - id: gebi-user-9094 #用户服务
@@ -41,10 +41,10 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
-              - "http://localhost:9094"
-              - "http://localhost:9095"
-              - "http://localhost:9096"
-              - "http://localhost:8000"
+              - "http://127.0.0.1:9094"
+              - "http://127.0.0.1:9095"
+              - "http://127.0.0.1:9096"
+              - "http://127.0.0.1:8000"
             allowedMethods:
               - "GET"
               - "POST"

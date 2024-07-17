@@ -33,6 +33,6 @@ public interface ChartConstant {
     /**
      * AI模型ID
      */
-    Long MODE_ID = 1659171950288818178L;
+    Long MODE_ID = 1813454646324166657L;
     // endregion
 }

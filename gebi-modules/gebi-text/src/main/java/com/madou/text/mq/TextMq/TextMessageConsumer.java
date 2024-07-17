@@ -3,6 +3,7 @@ package com.madou.text.mq.TextMq;
 import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.madou.common.ai.config.AiManager;
+import com.madou.common.ai.config.QianWenText;
 import com.madou.common.common.ErrorCode;
 import com.madou.common.constant.MqConstant;
 import com.madou.common.excption.BusinessException;
@@ -37,6 +38,8 @@ public class TextMessageConsumer {
     private TextRecordService textRecordService;
     @Resource
     private AiManager aiManager;
+    @Resource
+    private QianWenText qianWenText;
 
     @SneakyThrows
     @RabbitListener(queues = {MqConstant.TEXT_QUEUE_NAME},ackMode = "MANUAL")
@@ -72,7 +75,8 @@ public class TextMessageConsumer {
             //队列重新消费时，不在重新生成已经生成过的数据
             if (textRecord.getGenTextContent() != null) continue;
             try {
-                result = aiManager.doChat(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString(), TextConstant.MODE_ID);
+//                result = aiManager.doChat(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString(), TextConstant.MODE_ID);
+                result = qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString());
             } catch (Exception e) {
                 channel.basicNack(deliveryTag,false,true);
                 log.warn("信息放入队列{}", DateTime.now());

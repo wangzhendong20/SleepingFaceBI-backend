@@ -1,5 +1,7 @@
 package com.madou.chart.controller;
 
+import com.alibaba.dashscope.exception.InputRequiredException;
+import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.madou.chart.api.constant.ChartConstant;
@@ -8,6 +10,7 @@ import com.madou.chart.api.model.entity.Chart;
 import com.madou.chart.api.model.vo.ChartVO;
 import com.madou.chart.service.ChartService;
 import com.madou.common.ai.config.AiManager;
+import com.madou.common.ai.config.QianWenChart;
 import com.madou.common.annotation.AuthCheck;
 import com.madou.common.common.BaseResponse;
 import com.madou.common.common.DeleteRequest;
@@ -51,6 +54,9 @@ public class ChartController {
 
     @Resource
     private AiManager aiManager;
+
+    @Resource
+    private QianWenChart qianWenChart;
 
 
     @Resource
@@ -267,13 +273,14 @@ public class ChartController {
      */
     @PostMapping("/gen")
     public BaseResponse<AiResponse> genChartAi(@RequestPart("file") MultipartFile multipartFile,
-                                               GenChartByAiRequest genChartByAiRequest) {
+                                               GenChartByAiRequest genChartByAiRequest) throws NoApiKeyException, InputRequiredException {
 
         User loginUser = userService.getLoginUser();
         //获取任务表数据
         Chart chartTask = chartService.getChartTask(multipartFile, genChartByAiRequest, loginUser);
 
-        String result = aiManager.doChat(chartService.buildUserInput(chartTask), ChartConstant.MODE_ID);
+//        String result = aiManager.doChat(chartService.buildUserInput(chartTask), ChartConstant.MODE_ID);
+        String result = qianWenChart.callWithMessage(chartService.buildUserInput(chartTask));
         //处理返回的数据
         boolean saveResult = chartService.saveChartAiResult(result, chartTask.getId());
         if (!saveResult){

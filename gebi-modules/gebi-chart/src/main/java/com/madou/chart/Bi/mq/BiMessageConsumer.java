@@ -5,6 +5,7 @@ import com.madou.chart.api.constant.ChartConstant;
 import com.madou.chart.api.model.entity.Chart;
 import com.madou.chart.service.ChartService;
 import com.madou.common.ai.config.AiManager;
+import com.madou.common.ai.config.QianWenChart;
 import com.madou.common.common.ErrorCode;
 import com.madou.common.constant.MqConstant;
 import com.madou.common.excption.BusinessException;
@@ -31,6 +32,9 @@ public class BiMessageConsumer {
 
     @Resource
     private AiManager aiManager;
+
+    @Resource
+    private QianWenChart qianWenChart;
 
     @SneakyThrows
     @RabbitListener(queues = {MqConstant.BI_QUEUE_NAME},ackMode = "MANUAL")
@@ -60,8 +64,10 @@ public class BiMessageConsumer {
         //调用AI
         String result = null;
         try {
-            result = aiManager.doChat(chartService.buildUserInput(chart).toString(), ChartConstant.MODE_ID);
+//            result = aiManager.doChat(chartService.buildUserInput(chart).toString(), ChartConstant.MODE_ID);
+            result = qianWenChart.callWithMessage(chartService.buildUserInput(chart).toString());
         } catch (Exception e) {
+            log.info(e.getMessage() + "==================================");
             channel.basicNack(deliveryTag,false,true);
             log.warn("信息放入队列{}", DateTime.now());
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");

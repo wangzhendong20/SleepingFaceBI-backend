@@ -2,18 +2,17 @@ server:
   port: 9096
   servlet:
     context-path: /textApi
-
 spring:
   application:
     name: gebi-text-9096
   cloud:
     nacos:
-      server-addr: 192.168.10.151:8848 #注册中心
+      server-addr: 127.0.0.1:8848 #注册中心
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ge_bi
+    url: jdbc:mysql://localhost:3306/bi_db
     username: root
-    password: 123456
+    password: root
     # Redis 配置
     # todo 需替换配置，然后取消注释
   redis:
@@ -37,7 +36,7 @@ spring:
       # 大小限制
       max-file-size: 10MB
   rabbitmq:
-    addresses: localhost
+    addresses: 127.0.0.1
     port: 5672
     password: guest
     username: guest
@@ -61,7 +60,7 @@ dubbo:
     name: dubbo
     port: -1
   registry:
-    address: nacos://192.168.10.151:8848
+    address: nacos://127.0.0.1:8848
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -92,8 +91,8 @@ mybatis-plus:
 #鱼聪明
 yuapi:
   client:
-    access-key: ux7bpq5mqr8db3n0dfhd46bunkebr8f3
-    secret-key: eg6zsakkz0av0f6jae3g3cw163nw56hc
+    access-key: 9xve2a6hz5njnxej4d6g2s7stw2msopk
+    secret-key: 6jjxn4ginp1qoqemjop7qe1gwf7w79bb
 
 sa-token:
   # token 名称（同时也是 cookie 名称）

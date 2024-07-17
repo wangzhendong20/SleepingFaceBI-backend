@@ -5,10 +5,10 @@ spring:
     name: gebi-gateway-8099
   redis:
     database: 3
-    host: 服务器
+    host: localhost
     port: 6379
     timeout: 5000
-    password: 服务器密码
+#    password: 服务器密码
     lettuce:
       pool:
         # 连接池最大连接数
@@ -22,7 +22,7 @@ spring:
 
   cloud:
     nacos:
-      server-addr: 172.17.0.2:8848 #注册中心
+      server-addr: localhost:8848 #注册中心
     gateway:
       routes:
         - id: gebi-user-9094 #用户服务
@@ -42,10 +42,11 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
-              - "http://60.204.157.128:9094"
-              - "http://60.204.157.128:9095"
-              - "http://60.204.157.128:9096"
-              - "http://60.204.157.128:80"
+              - "http://localhost:9094"
+              - "http://localhost:9095"
+              - "http://localhost:9096"
+              - "http://localhost:80"
+              - "http://localhost:8000"
             allowedMethods:
               - "GET"
               - "POST"

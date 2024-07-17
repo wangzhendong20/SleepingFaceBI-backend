@@ -75,7 +75,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         ThrowUtils.throwIf(size==0,ErrorCode.PARAMS_ERROR,"文件为空");
         //校验文件后缀
         String suffix = FileUtil.getSuffix(originalFilename);
-        final List<String> validFileSuffix = Arrays.asList("png","xlsx","svg","webp","jpeg");
+        final List<String> validFileSuffix = Arrays.asList("png","xlsx","svg","webp","jpeg","csv");
         ThrowUtils.throwIf(!validFileSuffix.contains(suffix),ErrorCode.PARAMS_ERROR,"文件后缀名非法");
 
         // 压缩后的数据
