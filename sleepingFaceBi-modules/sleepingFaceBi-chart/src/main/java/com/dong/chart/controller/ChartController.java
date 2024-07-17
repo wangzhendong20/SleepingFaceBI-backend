@@ -9,7 +9,6 @@ import com.dong.chart.api.model.dto.*;
 import com.dong.chart.api.model.entity.Chart;
 import com.dong.chart.api.model.vo.ChartVO;
 import com.dong.chart.service.ChartService;
-import com.dong.common.ai.config.AiManager;
 import com.dong.common.ai.config.QianWenChart;
 import com.dong.common.annotation.AuthCheck;
 import com.dong.common.common.BaseResponse;
@@ -52,8 +51,6 @@ public class ChartController {
     @DubboReference
     private InnerUserService userService;
 
-    @Resource
-    private AiManager aiManager;
 
     @Resource
     private QianWenChart qianWenChart;
@@ -279,7 +276,6 @@ public class ChartController {
         //获取任务表数据
         Chart chartTask = chartService.getChartTask(multipartFile, genChartByAiRequest, loginUser);
 
-//        String result = aiManager.doChat(chartService.buildUserInput(chartTask), ChartConstant.MODE_ID);
         String result = qianWenChart.callWithMessage(chartService.buildUserInput(chartTask));
         //处理返回的数据
         boolean saveResult = chartService.saveChartAiResult(result, chartTask.getId());

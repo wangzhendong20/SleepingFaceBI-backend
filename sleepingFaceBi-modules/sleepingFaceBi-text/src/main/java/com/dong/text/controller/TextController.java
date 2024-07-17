@@ -5,7 +5,6 @@ import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
-import com.dong.common.ai.config.AiManager;
 import com.dong.common.ai.config.QianWenText;
 import com.dong.common.annotation.AuthCheck;
 import com.dong.common.common.BaseResponse;
@@ -59,8 +58,6 @@ public class TextController {
     @DubboReference
     private InnerUserService userService;
 
-    @Resource
-    private AiManager aiManager;
     @Resource
     private QianWenText qianWenText;
     @DubboReference
@@ -319,7 +316,6 @@ public class TextController {
         //将文本依次交给ai处理
         for (TextRecord textRecord : textRecords) {
             String result = null;
-//            result = aiManager.doChat(textRecordService.buildUserInput(textRecord,textType).toString(), TextConstant.MODE_ID);
             result = qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textType).toString());
             textRecord.setGenTextContent(result);
             textRecord.setStatus(TextConstant.SUCCEED);

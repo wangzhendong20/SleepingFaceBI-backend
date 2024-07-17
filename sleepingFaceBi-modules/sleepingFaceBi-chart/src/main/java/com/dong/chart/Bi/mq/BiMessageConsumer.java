@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateTime;
 import com.dong.chart.api.constant.ChartConstant;
 import com.dong.chart.api.model.entity.Chart;
 import com.dong.chart.service.ChartService;
-import com.dong.common.ai.config.AiManager;
 import com.dong.common.ai.config.QianWenChart;
 import com.dong.common.common.ErrorCode;
 import com.dong.common.constant.MqConstant;
@@ -30,8 +29,6 @@ public class BiMessageConsumer {
     @Resource
     private ChartService chartService;
 
-    @Resource
-    private AiManager aiManager;
 
     @Resource
     private QianWenChart qianWenChart;
@@ -64,7 +61,6 @@ public class BiMessageConsumer {
         //调用AI
         String result = null;
         try {
-//            result = aiManager.doChat(chartService.buildUserInput(chart).toString(), ChartConstant.MODE_ID);
             result = qianWenChart.callWithMessage(chartService.buildUserInput(chart).toString());
         } catch (Exception e) {
             log.info(e.getMessage() + "==================================");

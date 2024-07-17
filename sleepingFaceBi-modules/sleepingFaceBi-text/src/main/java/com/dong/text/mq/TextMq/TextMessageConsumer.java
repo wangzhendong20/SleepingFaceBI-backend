@@ -2,7 +2,6 @@ package com.dong.text.mq.TextMq;
 
 import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.dong.common.ai.config.AiManager;
 import com.dong.common.ai.config.QianWenText;
 import com.dong.common.common.ErrorCode;
 import com.dong.common.constant.MqConstant;
@@ -36,8 +35,7 @@ public class TextMessageConsumer {
 
     @Resource
     private TextRecordService textRecordService;
-    @Resource
-    private AiManager aiManager;
+
     @Resource
     private QianWenText qianWenText;
 
@@ -75,7 +73,6 @@ public class TextMessageConsumer {
             //队列重新消费时，不在重新生成已经生成过的数据
             if (textRecord.getGenTextContent() != null) continue;
             try {
-//                result = aiManager.doChat(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString(), TextConstant.MODE_ID);
                 result = qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString());
             } catch (Exception e) {
                 channel.basicNack(deliveryTag,false,true);
