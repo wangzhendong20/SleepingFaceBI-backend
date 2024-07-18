@@ -11,6 +11,8 @@ import com.dong.text.api.model.entity.TextRecord;
 import com.dong.text.api.model.entity.TextTask;
 import com.dong.text.service.TextRecordService;
 import com.dong.text.service.TextTaskService;
+import com.github.rholder.retry.*;
+import com.google.common.base.Predicates;
 import com.rabbitmq.client.Channel;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,11 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 文本转换消费者队列
@@ -72,13 +78,33 @@ public class TextMessageConsumer {
             String result = null;
             //队列重新消费时，不在重新生成已经生成过的数据
             if (textRecord.getGenTextContent() != null) continue;
+            Callable<String> callable = () -> {
+                return qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString()); // 业务逻辑
+            };
+
+            // 定义重试器
+            Retryer<String> retryer = RetryerBuilder.<String>newBuilder()
+                    .retryIfResult(Predicates.<String>isNull()) // 如果结果为空则重试
+                    .retryIfExceptionOfType(Exception.class) // 发生IO异常则重试
+                    .retryIfRuntimeException() // 发生运行时异常则重试
+                    .withWaitStrategy(WaitStrategies.incrementingWait(10, TimeUnit.SECONDS, 10, TimeUnit.SECONDS)) // 等待
+                    .withStopStrategy(StopStrategies.stopAfterAttempt(4)) // 允许执行4次（首次执行 + 最多重试3次）
+                    .build();
+
             try {
-                result = qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString());
-            } catch (Exception e) {
+                result = retryer.call(callable); // 执行
+            } catch (Exception e) { // 重试次数超过阈值或被强制中断
                 channel.basicNack(deliveryTag,false,true);
                 log.warn("信息放入队列{}", DateTime.now());
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
             }
+//            try {
+//                result = qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString());
+//            } catch (Exception e) {
+//                channel.basicNack(deliveryTag,false,true);
+//                log.warn("信息放入队列{}", DateTime.now());
+//                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
+//            }
             textRecord.setGenTextContent(result);
             textRecord.setStatus(TextConstant.SUCCEED);
             boolean updateById = textRecordService.updateById(textRecord);
