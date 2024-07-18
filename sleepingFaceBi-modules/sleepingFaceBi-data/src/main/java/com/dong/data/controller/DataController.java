@@ -582,9 +582,9 @@ public class DataController {
         //获取记录表
         List<DataRecord> recordList = dataRecordService.list(new QueryWrapper<DataRecord>().eq("DataTaskId", DataTaskId));
         //校验，查看原始文本是否为空
-        recordList.forEach(DataRecord -> {
-            ThrowUtils.throwIf(StringUtils.isBlank(DataRecord.getTextContent()),ErrorCode.PARAMS_ERROR,"文本为空");
-        });
+//        recordList.forEach(DataRecord -> {
+//            ThrowUtils.throwIf(StringUtils.isBlank(DataRecord.getTextContent()),ErrorCode.PARAMS_ERROR,"文本为空");
+//        });
 
         User loginUser = userService.getLoginUser();
 
