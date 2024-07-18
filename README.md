@@ -51,6 +51,7 @@
 ## TODO:
 - 目前只使用了redis+redisson做限流，可以考虑使用redis来存储生成的文本数据等，提高加载速度。
 - 任务执行的结果情况可以给用户发送实时消息通知。（Websocket）
+- 考虑负载均衡，提高服务的可用性。
 - API功能完善，增加更多的接口。
 - 继续训练"SleepingFace小助手"大模型。
 - code cleaning.
