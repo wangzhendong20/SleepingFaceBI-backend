@@ -14,6 +14,8 @@
 + + [x] 智能数据清洗
 + + [x] 智能数据筛选
 + [x] 积分功能
++ [❌] SleepingFace小助手(waiting)
++ + [❌]大白话->公文
 
 ## 架构
 - 服务模块：sleepingFaceBi-user（用户服务），sleepingFaceBi-chart（图表服务），sleepingFaceBi-text（文本服务）。
