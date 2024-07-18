@@ -4,12 +4,12 @@ import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dong.common.common.ErrorCode;
 import com.dong.common.excption.ThrowUtils;
-import com.dong.common.utils.TxtUtils;
 import com.dong.text.api.constant.TextConstant;
 import com.dong.text.api.model.dto.GenTextTaskByAiRequest;
 import com.dong.text.api.model.entity.TextRecord;
 import com.dong.text.api.model.entity.TextTask;
 import com.dong.text.mapper.TextTaskMapper;
+import com.dong.text.readerStrategy.FileProcessor;
 import com.dong.text.service.TextRecordService;
 import com.dong.text.service.TextTaskService;
 import com.dong.user.api.InnerCreditService;
@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,8 @@ public class TextTaskServiceImpl extends ServiceImpl<TextTaskMapper, TextTask>
 
     @Resource
     private TextRecordService textRecordService;
+    @Resource
+    private FileProcessor fileProcessor;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -80,13 +83,20 @@ public class TextTaskServiceImpl extends ServiceImpl<TextTaskMapper, TextTask>
         // 压缩后的数据
 
         // 增加txt,doc,docx,md文件类型判断
-        if (suffix.equals("txt") || suffix.equals("md")) {
-            textContentList = TxtUtils.readerFile(multipartFile);
-        } else if (suffix.equals("doc")) {
-            textContentList = TxtUtils.readerDocxFile(multipartFile);
-        } else if (suffix.equals("docx")) {
-            textContentList = TxtUtils.readerDocxFile(multipartFile);
+//        if (suffix.equals("txt") || suffix.equals("md")) {
+//            textContentList = TxtUtils.readerFile(multipartFile);
+//        } else if (suffix.equals("doc")) {
+//            textContentList = TxtUtils.readerDocxFile(multipartFile);
+//        } else if (suffix.equals("docx")) {
+//            textContentList = TxtUtils.readerDocxFile(multipartFile);
+//        }
+        try {
+            textContentList = fileProcessor.processFile(suffix, multipartFile);
+            // 处理读取到的文件内容
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
 
         ThrowUtils.throwIf(textContentList.size() ==0,ErrorCode.PARAMS_ERROR,"文件为空");
 
