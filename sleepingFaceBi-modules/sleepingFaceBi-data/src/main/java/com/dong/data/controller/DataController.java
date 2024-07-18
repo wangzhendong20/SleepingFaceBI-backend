@@ -541,4 +541,66 @@ public class DataController {
 
     }
 
+    /**
+     * 文本数据上传(mq)
+     *
+     * @param multipartFile
+     * @param genDataTaskByAiRequest
+     * @return
+     */
+    @PostMapping("/genForm/async/mq")
+    public BaseResponse<AiResponse> genDataFormTaskAsyncAiMq(@RequestPart("file") MultipartFile multipartFile,
+                                                               GenDataTaskByAiRequest genDataTaskByAiRequest) {
+
+
+        User loginUser = userService.getLoginUser();
+
+        //获取文本任务并校验
+        DataTask DataTask = dataTaskService.getDataTask(multipartFile, genDataTaskByAiRequest, loginUser);
+
+        //获取任务id
+        Long taskId = DataTask.getId();
+
+        log.warn("准备发送信息给队列，Message={}=======================================",taskId);
+        mqMessageProducer.sendMessage(MqConstant.DATA_FORM_EXCHANGE_NAME,MqConstant.DATA_FORM_ROUTING_KEY,String.valueOf(taskId));
+        //返回数据参数
+        AiResponse aiResponse = new AiResponse();
+        aiResponse.setResultId(DataTask.getId());
+        return ResultUtils.success(aiResponse);
+
+    }
+
+    /**
+     * 文本重新生成(mq)
+     *
+     * @param DataRebuildRequest
+     * @return
+     */
+    @PostMapping("/genForm/async/rebuild")
+    public BaseResponse<AiResponse> genDataFormTaskAsyncAiRebuild(DataRebuildRequest DataRebuildRequest) {
+        Long DataTaskId = DataRebuildRequest.getId();
+        //获取记录表
+        List<DataRecord> recordList = dataRecordService.list(new QueryWrapper<DataRecord>().eq("DataTaskId", DataTaskId));
+        //校验，查看原始文本是否为空
+        recordList.forEach(DataRecord -> {
+            ThrowUtils.throwIf(StringUtils.isBlank(DataRecord.getTextContent()),ErrorCode.PARAMS_ERROR,"文本为空");
+        });
+
+        User loginUser = userService.getLoginUser();
+
+        //保存数据库 wait
+        DataTask DataTask = new DataTask();
+        DataTask.setStatus(DataConstant.WAIT);
+        DataTask.setId(DataTaskId);
+        boolean saveResult = dataTaskService.updateById(DataTask);
+        ThrowUtils.throwIf(!saveResult,ErrorCode.SYSTEM_ERROR,"文本保存失败");
+        log.warn("准备发送信息给队列，Message={}=======================================",DataTaskId);
+        mqMessageProducer.sendMessage(MqConstant.DATA_FORM_EXCHANGE_NAME,MqConstant.DATA_FORM_ROUTING_KEY,String.valueOf(DataTaskId));
+        //返回数据参数
+        AiResponse aiResponse = new AiResponse();
+        aiResponse.setResultId(DataTask.getId());
+        return ResultUtils.success(aiResponse);
+
+    }
+
 }

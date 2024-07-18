@@ -75,4 +75,16 @@ public interface MqConstant {
     String DATA_CHOOSE_DEAD_QUEUE_NAME="dataChoose_dead_queue";
 
     String DATA_CHOOSE_DEAD_ROUTING_KEY="dataChoose_dead_routingKey";
+
+
+    String DATA_FORM_EXCHANGE_NAME = "dataForm_exchange";
+
+    String DATA_FORM_QUEUE_NAME="dataForm_queue";
+
+    String DATA_FORM_ROUTING_KEY="dataForm_routingKey";
+    //死信
+    String DATA_FORM_DEAD_EXCHANGE_NAME="dataForm_dead_exchange";
+    String DATA_FORM_DEAD_QUEUE_NAME="dataForm_dead_queue";
+
+    String DATA_FORM_DEAD_ROUTING_KEY="dataForm_dead_routingKey";
 }
