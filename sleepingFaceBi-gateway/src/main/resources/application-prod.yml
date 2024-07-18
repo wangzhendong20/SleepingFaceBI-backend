@@ -5,10 +5,10 @@ spring:
     name: sleepingFaceBi-gateway-8099
   redis:
     database: 3
-    host: localhost
+    host: 服务器
     port: 6379
     timeout: 5000
-#    password: 服务器密码
+    password: 服务器密码
     lettuce:
       pool:
         # 连接池最大连接数
@@ -22,7 +22,7 @@ spring:
 
   cloud:
     nacos:
-      server-addr: localhost:8848 #注册中心
+      server-addr: 127.17.0.2:8848 #注册中心
     gateway:
       routes:
         - id: sleepingFaceBi-user-9094 #用户服务
@@ -37,6 +37,10 @@ spring:
           uri: lb://sleepingFaceBi-text-9096
           predicates:
             - Path=/textApi/**
+        - id: sleepingFaceBi-data-9097 #数据服务
+          uri: lb://sleepingFaceBi-data-9097
+          predicates:
+            - Path=/dataApi/**
       globalcors:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
@@ -45,8 +49,8 @@ spring:
               - "http://localhost:9094"
               - "http://localhost:9095"
               - "http://localhost:9096"
+              - "http://localhost:9097"
               - "http://localhost:80"
-              - "http://localhost:8000"
             allowedMethods:
               - "GET"
               - "POST"
@@ -79,6 +83,10 @@ knife4j:
         url: /chartApi/v3/api-docs?group=default
         order: 1
         context-path: /chartApi
+      - name: 数据服务
+        url: /dataApi/v3/api-docs?group=default
+        order: 1
+        context-path: /dataApi
 security:
   # white list
   ignore:
