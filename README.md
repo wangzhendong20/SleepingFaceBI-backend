@@ -46,3 +46,12 @@
 - Umi 4前端框架
 - Ant Design 组件库
 - Echarts 可视化库
+
+## 效果图
+***
+### 登录页
+![image](assest/login.png)
+### 注册页
+![image](assest/register.png)
+### 首页
+![image](assest/MyInfo.png)
