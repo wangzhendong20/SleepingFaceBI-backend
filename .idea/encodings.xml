@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-api/gebi-ai-api/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-api/sleepingFaceBi-chart-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-api/sleepingFaceBi-chart-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sleepingFaceBi-api/sleepingFaceBi-data-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sleepingFaceBi-api/sleepingFaceBi-data-api/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-api/sleepingFaceBi-text-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-api/sleepingFaceBi-text-api/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-api/sleepingFaceBi-user-api/src/main/java" charset="UTF-8" />
@@ -33,6 +35,8 @@
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-modules/sleepingFaceBi-chart/gebi-chart-api/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-modules/sleepingFaceBi-chart/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-modules/sleepingFaceBi-chart/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sleepingFaceBi-modules/sleepingFaceBi-data/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sleepingFaceBi-modules/sleepingFaceBi-data/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-modules/sleepingFaceBi-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-modules/sleepingFaceBi-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sleepingFaceBi-modules/sleepingFaceBi-text/src/main/java" charset="UTF-8" />

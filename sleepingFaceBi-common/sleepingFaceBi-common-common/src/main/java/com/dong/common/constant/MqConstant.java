@@ -40,4 +40,39 @@ public interface MqConstant {
     String TEXT_DEAD_QUEUE_NAME="text_dead_queue";
 
     String TEXT_DEAD_ROUTING_KEY="text_dead_routingKey";
+
+    String DATA_EXCHANGE_NAME = "data_exchange";
+
+    String DATA_QUEUE_NAME="data_queue";
+
+    String DATA_ROUTING_KEY="data_routingKey";
+    //死信
+    String DATA_DEAD_EXCHANGE_NAME="data_dead_exchange";
+    String DATA_DEAD_QUEUE_NAME="data_dead_queue";
+
+    String DATA_DEAD_ROUTING_KEY="data_dead_routingKey";
+
+
+    String DATA_CLEAN_EXCHANGE_NAME = "dataClean_exchange";
+
+    String DATA_CLEAN_QUEUE_NAME="dataClean_queue";
+
+    String DATA_CLEAN_ROUTING_KEY="dataClean_routingKey";
+    //死信
+    String DATA_CLEAN_DEAD_EXCHANGE_NAME="dataClean_dead_exchange";
+    String DATA_CLEAN_DEAD_QUEUE_NAME="dataClean_dead_queue";
+
+    String DATA_CLEAN_DEAD_ROUTING_KEY="dataClean_dead_routingKey";
+
+
+    String DATA_CHOOSE_EXCHANGE_NAME = "dataChoose_exchange";
+
+    String DATA_CHOOSE_QUEUE_NAME="dataChoose_queue";
+
+    String DATA_CHOOSE_ROUTING_KEY="dataChoose_routingKey";
+    //死信
+    String DATA_CHOOSE_DEAD_EXCHANGE_NAME="dataChoose_dead_exchange";
+    String DATA_CHOOSE_DEAD_QUEUE_NAME="dataChoose_dead_queue";
+
+    String DATA_CHOOSE_DEAD_ROUTING_KEY="dataChoose_dead_routingKey";
 }

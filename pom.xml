@@ -14,7 +14,11 @@
         <module>sleepingFaceBi-modules/sleepingFaceBi-chart</module>
         <module>sleepingFaceBi-modules/sleepingFaceBi-text</module>
         <module>sleepingFaceBi-modules/sleepingFaceBi-service</module>
+        <module>sleepingFaceBi-modules/sleepingFaceBi-data</module>
         <module>sleepingFaceBi-common</module>
+        <module>sleepingFaceBi-modules/sleepingFaceBi-data</module>
+        <module>sleepingFaceBi-modules/sleepingFaceBi-data</module>
+        <module>sleepingFaceBi-api/sleepingFaceBi-data-api</module>
     </modules>
 
     <packaging>pom</packaging>

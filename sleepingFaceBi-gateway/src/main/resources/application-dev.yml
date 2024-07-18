@@ -35,6 +35,10 @@ spring:
           uri: lb://sleepingFaceBi-text-9096
           predicates:
             - Path=/textApi/**
+        - id: sleepingFaceBi-data-9097 #数据转换服务
+          uri: lb://sleepingFaceBi-data-9097
+          predicates:
+            - Path=/dataApi/**
       globalcors:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
@@ -43,6 +47,7 @@ spring:
               - "http://127.0.0.1:9094"
               - "http://127.0.0.1:9095"
               - "http://127.0.0.1:9096"
+              - "http://127.0.0.1:9097"
               - "http://127.0.0.1:8000"
             allowedMethods:
               - "GET"
@@ -76,6 +81,10 @@ knife4j:
         url: /chartApi/v3/api-docs?group=default
         order: 1
         context-path: /chartApi
+      - name: 数据服务
+        url: /dataApi/v3/api-docs?group=default
+        order: 1
+        context-path: /dataApi
 security:
   # white list
   ignore:

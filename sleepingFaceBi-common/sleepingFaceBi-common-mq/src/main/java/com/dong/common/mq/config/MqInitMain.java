@@ -148,4 +148,143 @@ public class MqInitMain {
     Binding BiBinding(Queue BiQueue, DirectExchange BiExchange) {
         return BindingBuilder.bind(BiQueue).to(BiExchange).with(MqConstant.BI_ROUTING_KEY);
     }
+
+
+    /**
+     * 数据模块
+     */
+    /**
+     * 将死信队列和交换机声明
+     */
+    @Bean
+    Queue DataDeadQueue(){
+        return QueueBuilder.durable(MqConstant.DATA_DEAD_QUEUE_NAME).build();
+    }
+
+    @Bean
+    DirectExchange DataDeadExchange() {
+        return new DirectExchange(MqConstant.DATA_DEAD_EXCHANGE_NAME);
+    }
+
+
+    @Bean
+    Binding DataDeadBinding(Queue TxtDeadQueue, DirectExchange TxtDeadExchange) {
+        return BindingBuilder.bind(TxtDeadQueue).to(TxtDeadExchange).with(MqConstant.DATA_DEAD_ROUTING_KEY);
+    }
+
+    /**
+     * 将队列和交换机声明
+     */
+    @Bean
+    Queue DataQueue(){
+        //信息参数 设置TTL为1min
+        Map<String,Object> arg = new HashMap<>();
+        arg.put("x-message-ttl",60000);
+        //绑定死信交换机
+        arg.put("x-dead-letter-exchange",MqConstant.DATA_DEAD_EXCHANGE_NAME);
+        arg.put("x-dead-letter-routing-key",MqConstant.DATA_DEAD_ROUTING_KEY);
+        return QueueBuilder.durable(MqConstant.DATA_QUEUE_NAME).withArguments(arg).build();
+    }
+
+    @Bean
+    DirectExchange DataExchange() {
+        return new DirectExchange(MqConstant.DATA_EXCHANGE_NAME);
+    }
+
+    @Bean
+    Binding DataBinding(Queue TxtQueue, DirectExchange TxtExchange) {
+        return BindingBuilder.bind(TxtQueue).to(TxtExchange).with(MqConstant.DATA_ROUTING_KEY);
+    }
+
+    /**
+     * 数据模块
+     */
+    /**
+     * 将死信队列和交换机声明
+     */
+    @Bean
+    Queue DataCleanDeadQueue(){
+        return QueueBuilder.durable(MqConstant.DATA_CLEAN_DEAD_QUEUE_NAME).build();
+    }
+
+    @Bean
+    DirectExchange DataCleanDeadExchange() {
+        return new DirectExchange(MqConstant.DATA_CLEAN_DEAD_EXCHANGE_NAME);
+    }
+
+
+    @Bean
+    Binding DataCleanDeadBinding(Queue TxtDeadQueue, DirectExchange TxtDeadExchange) {
+        return BindingBuilder.bind(TxtDeadQueue).to(TxtDeadExchange).with(MqConstant.DATA_CLEAN_DEAD_ROUTING_KEY);
+    }
+
+    /**
+     * 将队列和交换机声明
+     */
+    @Bean
+    Queue DataCleanQueue(){
+        //信息参数 设置TTL为1min
+        Map<String,Object> arg = new HashMap<>();
+        arg.put("x-message-ttl",60000);
+        //绑定死信交换机
+        arg.put("x-dead-letter-exchange",MqConstant.DATA_CLEAN_DEAD_EXCHANGE_NAME);
+        arg.put("x-dead-letter-routing-key",MqConstant.DATA_CLEAN_DEAD_ROUTING_KEY);
+        return QueueBuilder.durable(MqConstant.DATA_CLEAN_QUEUE_NAME).withArguments(arg).build();
+    }
+
+    @Bean
+    DirectExchange DataCleanExchange() {
+        return new DirectExchange(MqConstant.DATA_CLEAN_EXCHANGE_NAME);
+    }
+
+    @Bean
+    Binding DataCleanBinding(Queue TxtQueue, DirectExchange TxtExchange) {
+        return BindingBuilder.bind(TxtQueue).to(TxtExchange).with(MqConstant.DATA_CLEAN_ROUTING_KEY);
+    }
+
+    /**
+     * 数据模块
+     */
+    /**
+     * 将死信队列和交换机声明
+     */
+    @Bean
+    Queue DataChooseDeadQueue(){
+        return QueueBuilder.durable(MqConstant.DATA_CHOOSE_DEAD_QUEUE_NAME).build();
+    }
+
+    @Bean
+    DirectExchange DataChooseDeadExchange() {
+        return new DirectExchange(MqConstant.DATA_CHOOSE_DEAD_EXCHANGE_NAME);
+    }
+
+
+    @Bean
+    Binding DataChooseDeadBinding(Queue TxtDeadQueue, DirectExchange TxtDeadExchange) {
+        return BindingBuilder.bind(TxtDeadQueue).to(TxtDeadExchange).with(MqConstant.DATA_CHOOSE_DEAD_ROUTING_KEY);
+    }
+
+    /**
+     * 将队列和交换机声明
+     */
+    @Bean
+    Queue DataChooseQueue(){
+        //信息参数 设置TTL为1min
+        Map<String,Object> arg = new HashMap<>();
+        arg.put("x-message-ttl",60000);
+        //绑定死信交换机
+        arg.put("x-dead-letter-exchange",MqConstant.DATA_CHOOSE_DEAD_EXCHANGE_NAME);
+        arg.put("x-dead-letter-routing-key",MqConstant.DATA_CHOOSE_DEAD_ROUTING_KEY);
+        return QueueBuilder.durable(MqConstant.DATA_CHOOSE_QUEUE_NAME).withArguments(arg).build();
+    }
+
+    @Bean
+    DirectExchange DataChooseExchange() {
+        return new DirectExchange(MqConstant.DATA_CHOOSE_EXCHANGE_NAME);
+    }
+
+    @Bean
+    Binding DataChooseBinding(Queue TxtQueue, DirectExchange TxtExchange) {
+        return BindingBuilder.bind(TxtQueue).to(TxtExchange).with(MqConstant.DATA_CHOOSE_ROUTING_KEY);
+    }
 }
