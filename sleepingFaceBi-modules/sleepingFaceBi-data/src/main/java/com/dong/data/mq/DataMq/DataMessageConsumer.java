@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dong.common.ai.config.QianWenData;
 import com.dong.common.common.ErrorCode;
+import com.dong.common.configs.config.GuavaRetryConfig;
 import com.dong.common.constant.MqConstant;
 import com.dong.common.excption.BusinessException;
 import com.dong.data.api.constant.DataConstant;
@@ -11,6 +12,7 @@ import com.dong.data.api.model.entity.DataRecord;
 import com.dong.data.api.model.entity.DataTask;
 import com.dong.data.service.DataRecordService;
 import com.dong.data.service.DataTaskService;
+import com.github.rholder.retry.Retryer;
 import com.rabbitmq.client.Channel;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * 文本转换消费者队列
@@ -38,6 +41,8 @@ public class DataMessageConsumer {
 
     @Resource
     private QianWenData qianWenData;
+    @Resource
+    private GuavaRetryConfig guavaRetryConfig;
 
     @SneakyThrows
     @RabbitListener(queues = {MqConstant.DATA_QUEUE_NAME},ackMode = "MANUAL")
@@ -72,13 +77,25 @@ public class DataMessageConsumer {
             String result = null;
             //队列重新消费时，不在重新生成已经生成过的数据
             if (DataRecord.getGenTextContent() != null) continue;
+            // Guava Retry
+            Callable<String> callable = () -> {
+                return qianWenData.callWithMessageConvert(DataRecordService.buildUserInput(DataRecord,DataTask.getTextType()).toString());
+            };
+            Retryer<String> retryer = guavaRetryConfig.retryer();
             try {
-                result = qianWenData.callWithMessageConvert(DataRecordService.buildUserInput(DataRecord,DataTask.getTextType()).toString());
-            } catch (Exception e) {
+                result = retryer.call(callable); // 执行
+            } catch (Exception e) { // 重试次数超过阈值或被强制中断
                 channel.basicNack(deliveryTag,false,true);
                 log.warn("信息放入队列{}", DateTime.now());
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
             }
+//            try {
+//                result = qianWenData.callWithMessageConvert(DataRecordService.buildUserInput(DataRecord,DataTask.getTextType()).toString());
+//            } catch (Exception e) {
+//                channel.basicNack(deliveryTag,false,true);
+//                log.warn("信息放入队列{}", DateTime.now());
+//                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
+//            }
             DataRecord.setGenTextContent(result);
             DataRecord.setStatus(DataConstant.SUCCEED);
             boolean updateById = DataRecordService.updateById(DataRecord);

@@ -1,3 +1,4 @@
 com.dong.common.configs.manager.RedisLimiterManager
-com.dong.common.configs.config.RedissonConfig
+com.dong.common.configs.config.RetryConfig
+com.dong.common.configs.config.GuavaRetryConfig
 

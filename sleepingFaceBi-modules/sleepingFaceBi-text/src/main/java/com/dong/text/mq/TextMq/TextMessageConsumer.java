@@ -4,6 +4,8 @@ import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dong.common.ai.config.QianWenText;
 import com.dong.common.common.ErrorCode;
+import com.dong.common.configs.config.GuavaRetryConfig;
+import com.dong.common.configs.config.RetryConfig;
 import com.dong.common.constant.MqConstant;
 import com.dong.common.excption.BusinessException;
 import com.dong.text.api.constant.TextConstant;
@@ -20,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -41,6 +44,11 @@ public class TextMessageConsumer {
 
     @Resource
     private TextRecordService textRecordService;
+
+    @Resource
+    private RetryConfig retryConfig;
+    @Resource
+    private GuavaRetryConfig guavaRetryConfig;
 
     @Resource
     private QianWenText qianWenText;
@@ -78,19 +86,12 @@ public class TextMessageConsumer {
             String result = null;
             //队列重新消费时，不在重新生成已经生成过的数据
             if (textRecord.getGenTextContent() != null) continue;
+
+            // Guava Retry
             Callable<String> callable = () -> {
                 return qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString()); // 业务逻辑
             };
-
-            // 定义重试器
-            Retryer<String> retryer = RetryerBuilder.<String>newBuilder()
-                    .retryIfResult(Predicates.<String>isNull()) // 如果结果为空则重试
-                    .retryIfExceptionOfType(Exception.class) // 发生IO异常则重试
-                    .retryIfRuntimeException() // 发生运行时异常则重试
-                    .withWaitStrategy(WaitStrategies.incrementingWait(10, TimeUnit.SECONDS, 10, TimeUnit.SECONDS)) // 等待
-                    .withStopStrategy(StopStrategies.stopAfterAttempt(4)) // 允许执行4次（首次执行 + 最多重试3次）
-                    .build();
-
+            Retryer<String> retryer = guavaRetryConfig.retryer();
             try {
                 result = retryer.call(callable); // 执行
             } catch (Exception e) { // 重试次数超过阈值或被强制中断
@@ -98,6 +99,17 @@ public class TextMessageConsumer {
                 log.warn("信息放入队列{}", DateTime.now());
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
             }
+
+//            // Spring Retry
+//            RetryTemplate retryTemplate = retryConfig.retryTemplate();
+//            result = retryTemplate.execute(retryCallback -> {
+//                return qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString()); // 业务逻辑
+//            }, recoveryCallback -> {
+//                channel.basicNack(deliveryTag,false,true);
+//                log.warn("信息放入队列{}", DateTime.now());
+//                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
+//            });
+
 //            try {
 //                result = qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString());
 //            } catch (Exception e) {

@@ -6,8 +6,10 @@ import com.dong.chart.api.model.entity.Chart;
 import com.dong.chart.service.ChartService;
 import com.dong.common.ai.config.QianWenChart;
 import com.dong.common.common.ErrorCode;
+import com.dong.common.configs.config.GuavaRetryConfig;
 import com.dong.common.constant.MqConstant;
 import com.dong.common.excption.BusinessException;
+import com.github.rholder.retry.Retryer;
 import com.rabbitmq.client.Channel;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.concurrent.Callable;
 
 /**
  * 图表分析消费者队列
@@ -32,6 +35,9 @@ public class BiMessageConsumer {
 
     @Resource
     private QianWenChart qianWenChart;
+
+    @Resource
+    private GuavaRetryConfig guavaRetryConfig;
 
     @SneakyThrows
     @RabbitListener(queues = {MqConstant.BI_QUEUE_NAME},ackMode = "MANUAL")
@@ -60,14 +66,28 @@ public class BiMessageConsumer {
         }
         //调用AI
         String result = null;
+
+        // Guava Retry
+        Callable<String> callable = () -> {
+            return qianWenChart.callWithMessage(chartService.buildUserInput(chart).toString());
+        };
+        Retryer<String> retryer = guavaRetryConfig.retryer();
         try {
-            result = qianWenChart.callWithMessage(chartService.buildUserInput(chart).toString());
-        } catch (Exception e) {
-            log.info(e.getMessage() + "==================================");
+            result = retryer.call(callable); // 执行
+        } catch (Exception e) { // 重试次数超过阈值或被强制中断
             channel.basicNack(deliveryTag,false,true);
             log.warn("信息放入队列{}", DateTime.now());
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
         }
+
+//        try {
+//            result = qianWenChart.callWithMessage(chartService.buildUserInput(chart).toString());
+//        } catch (Exception e) {
+//            log.info(e.getMessage() + "==================================");
+//            channel.basicNack(deliveryTag,false,true);
+//            log.warn("信息放入队列{}", DateTime.now());
+//            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
+//        }
         //处理返回的数据
         try {
             boolean saveResult = chartService.saveChartAiResult(result, chart.getId());
