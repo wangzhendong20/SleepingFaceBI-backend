@@ -8,20 +8,20 @@ spring:
     name: sleepingFaceBi-text-9096
   cloud:
     nacos:
-      server-addr: localhost:8848 #注册中心
+      server-addr: 172.17.0.2:8848 #注册中心
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bi_db
+    url: jdbc:mysql://服务器:3306/bi_db
     username: root
     password: root
     # Redis 配置
     # todo 需替换配置，然后取消注释
   redis:
     database: 3
-    host: localhost
+    host: 服务器
     port: 6379
     timeout: 5000
-#    password: 服务器密码
+    password: 服务器密码
     lettuce:
       pool:
         # 连接池最大连接数
@@ -38,10 +38,10 @@ spring:
       # 大小限制
       max-file-size: 10MB
   rabbitmq:
-    addresses: localhost
+    addresses: 172.17.0.3
     port: 5672
     username: guest
-#    password: 服务器密码
+    password: 服务器密码
     listener:
       direct:
         acknowledge-mode: manual
@@ -62,7 +62,7 @@ dubbo:
     name: dubbo
     port: -1
   registry:
-    address: nacos://localhost:8848
+    address: nacos://172.17.0.2:8848
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -89,12 +89,6 @@ mybatis-plus:
       logic-delete-field: isDelete # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
-
-#鱼聪明
-yuapi:
-  client:
-    access-key: ux7bpq5mqr8db3n0dfhd46bunkebr8f3
-    secret-key: eg6zsakkz0av0f6jae3g3cw163nw56hc
 
 sa-token:
   # token 名称（同时也是 cookie 名称）
