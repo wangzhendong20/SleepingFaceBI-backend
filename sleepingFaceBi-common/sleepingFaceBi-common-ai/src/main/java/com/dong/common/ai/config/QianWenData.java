@@ -21,7 +21,7 @@ import java.util.List;
 public class QianWenData {
     public String callWithMessageConvert(String message) throws NoApiKeyException, ApiException, InputRequiredException
     {
-        Constants.apiKey="sk-8152bde853e3482ab1a0b5d2a02ab70f";
+        Constants.apiKey="Your api-key";
         Generation gen = new Generation();
         MessageManager msgManager = new MessageManager(10);
         Message systemMsg =
