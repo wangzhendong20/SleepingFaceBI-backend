@@ -4,6 +4,8 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dong.common.configs.manager.RedisLimiterManager;
+import com.dong.common.constant.LimitConstant;
 import com.google.gson.Gson;
 import com.dong.common.ai.config.QianWenText;
 import com.dong.common.annotation.AuthCheck;
@@ -62,6 +64,9 @@ public class TextController {
     private QianWenText qianWenText;
     @DubboReference
     private InnerCreditService creditService;
+
+    @Resource
+    private RedisLimiterManager redisLimiterManager;
 
     @Resource
     private MqMessageProducer mqMessageProducer;
@@ -357,6 +362,7 @@ public class TextController {
 
 
         User loginUser = userService.getLoginUser();
+        redisLimiterManager.doRateLimit(LimitConstant.GEN_TEXT_LIMIT + loginUser.getId());
 
         //获取文本任务并校验
         TextTask textTask = textTaskService.getTextTask(multipartFile, genTextTaskByAiRequest, loginUser);

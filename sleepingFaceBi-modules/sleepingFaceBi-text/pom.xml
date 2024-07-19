@@ -120,6 +120,11 @@
             <artifactId>sleepingFaceBi-common-ai</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.dong</groupId>
+            <artifactId>sleepingFaceBi-common-configs</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!--阿里巴巴大模型-->
         <!-- https://mvnrepository.com/artifact/com.alibaba/dashscope-sdk-java -->
         <dependency>

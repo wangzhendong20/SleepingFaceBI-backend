@@ -18,7 +18,7 @@
 + [❌] SleepingFace小助手(waiting)
 + + [x] 大白话->公文(v1.0)
 
-## 架构
+## 模块设计
 - 服务模块：sleepingFaceBi-user（用户服务），sleepingFaceBi-chart（图表服务），sleepingFaceBi-text（文本服务），sleepingFaceBi-data（数据服务）。
 - 公共服务模块：sleepingFaceBi-common-ai(AI服务), sleepingFaceBi-common-commm(公共服务), sleepingFaceBi-common-mq(消息队列服务), sleepingFaceBi-common-mybatis
 - 实体模块：sleeingFaceBi-api(实体模块)
@@ -50,7 +50,8 @@
 
 ## TODO:
 - 目前只使用了redis+redisson做限流，可以考虑使用redis来存储生成的文本数据等，提高加载速度。
-- 任务执行的结果情况可以给用户发送实时消息通知。（Websocket）
+- 完善登录方式，目前只支持用户名密码登录。(JustAuth)
+- 任务执行的结果情况可以给用户发送实时消息通知。(Websocket)
 - 考虑负载均衡，提高服务的可用性。
 - API功能完善，增加更多的接口。
 - 继续训练"SleepingFace小助手"大模型。

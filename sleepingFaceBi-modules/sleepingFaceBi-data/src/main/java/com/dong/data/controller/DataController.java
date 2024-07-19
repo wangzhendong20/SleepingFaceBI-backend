@@ -10,7 +10,9 @@ import com.dong.common.common.BaseResponse;
 import com.dong.common.common.DeleteRequest;
 import com.dong.common.common.ErrorCode;
 import com.dong.common.common.ResultUtils;
+import com.dong.common.configs.manager.RedisLimiterManager;
 import com.dong.common.constant.CommonConstant;
+import com.dong.common.constant.LimitConstant;
 import com.dong.common.constant.MqConstant;
 import com.dong.common.excption.BusinessException;
 import com.dong.common.excption.ThrowUtils;
@@ -73,6 +75,9 @@ public class DataController {
     private QianWenData qianWenData;
     @DubboReference
     private InnerCreditService creditService;
+
+    @Resource
+    private RedisLimiterManager redisLimiterManager;
 
     @Resource
     private MqMessageProducer mqMessageProducer;
@@ -368,6 +373,7 @@ public class DataController {
 
 
         User loginUser = userService.getLoginUser();
+        redisLimiterManager.doRateLimit(LimitConstant.GEN_DATA_LIMIT + loginUser.getId());
 
         //获取文本任务并校验
         DataTask DataTask = dataTaskService.getDataTask(multipartFile, genDataTaskByAiRequest, loginUser);
@@ -430,6 +436,7 @@ public class DataController {
 
 
         User loginUser = userService.getLoginUser();
+        redisLimiterManager.doRateLimit(LimitConstant.GEN_DATA_CLEAN_LIMIT + loginUser.getId());
 
         //获取文本任务并校验
         DataTask DataTask = dataTaskService.getDataTask(multipartFile, genDataTaskByAiRequest, loginUser);
@@ -492,6 +499,7 @@ public class DataController {
 
 
         User loginUser = userService.getLoginUser();
+        redisLimiterManager.doRateLimit(LimitConstant.GEN_DATA_CHOOSE_LIMIT + loginUser.getId());
 
         //获取文本任务并校验
         DataTask DataTask = dataTaskService.getDataTask(multipartFile, genDataTaskByAiRequest, loginUser);
@@ -554,6 +562,7 @@ public class DataController {
 
 
         User loginUser = userService.getLoginUser();
+        redisLimiterManager.doRateLimit(LimitConstant.GEN_DATA_FORM_LIMIT + loginUser.getId());
 
         //获取文本任务并校验
         DataTask DataTask = dataTaskService.getDataTask(multipartFile, genDataTaskByAiRequest, loginUser);

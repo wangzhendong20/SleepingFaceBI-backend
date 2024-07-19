@@ -15,7 +15,9 @@ import com.dong.common.common.BaseResponse;
 import com.dong.common.common.DeleteRequest;
 import com.dong.common.common.ErrorCode;
 import com.dong.common.common.ResultUtils;
+import com.dong.common.configs.manager.RedisLimiterManager;
 import com.dong.common.constant.CommonConstant;
+import com.dong.common.constant.LimitConstant;
 import com.dong.common.constant.MqConstant;
 import com.dong.common.excption.BusinessException;
 import com.dong.common.excption.ThrowUtils;
@@ -58,6 +60,9 @@ public class ChartController {
 
     @Resource
     private MqMessageProducer mqMessageProducer;
+
+    @Resource
+    private RedisLimiterManager redisLimiterManager;
 
     // region 增删改查
 
@@ -346,6 +351,7 @@ public class ChartController {
     public BaseResponse<AiResponse> genChartAsyncAiMq(@RequestPart("file") MultipartFile multipartFile,
                                                       GenChartByAiRequest genChartByAiRequest) {
         User loginUser = userService.getLoginUser();
+        redisLimiterManager.doRateLimit(LimitConstant.GEN_CHART_LIMIT + loginUser.getId());
 
         //获取任务表数据
         Chart chartTask = chartService.getChartTask(multipartFile, genChartByAiRequest, loginUser);

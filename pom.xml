@@ -19,6 +19,7 @@
         <module>sleepingFaceBi-modules/sleepingFaceBi-data</module>
         <module>sleepingFaceBi-modules/sleepingFaceBi-data</module>
         <module>sleepingFaceBi-api/sleepingFaceBi-data-api</module>
+        <module>sleepingFaceBi-common/sleepingFaceBi-common-configs</module>
     </modules>
 
     <packaging>pom</packaging>
