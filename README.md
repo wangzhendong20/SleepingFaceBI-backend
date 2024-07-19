@@ -18,9 +18,13 @@
 + [❌] SleepingFace小助手(waiting)
 + + [x] 大白话->公文(v1.0)
 
-## 模块设计
+## 架构
+![image](assest/Architecture.png)
+> tips:完整版正在donging...
+
+## 服务模块设计
 - 服务模块：sleepingFaceBi-user（用户服务），sleepingFaceBi-chart（图表服务），sleepingFaceBi-text（文本服务），sleepingFaceBi-data（数据服务）。
-- 公共服务模块：sleepingFaceBi-common-ai(AI服务), sleepingFaceBi-common-commm(公共服务), sleepingFaceBi-common-mq(消息队列服务), sleepingFaceBi-common-mybatis
+- 公共服务模块：sleepingFaceBi-common-ai(AI服务), sleepingFaceBi-common-configs(配置管理服务),sleepingFaceBi-common-commm(公共服务), sleepingFaceBi-common-mq(消息队列服务), sleepingFaceBi-common-mybatis
 - 实体模块：sleeingFaceBi-api(实体模块)
 - 网关模块：sleepingFaceBi-gateway(网关服务)
 
