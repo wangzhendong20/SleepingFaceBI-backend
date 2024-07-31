@@ -8,10 +8,6 @@ import java.io.Serializable;
 
 /**
  * Common Response Body to Frontend
- *
- * @author ltyzzz
- * @email ltyzzz2000@gmail.com
- * @date 2023/3/4 11:45
  */
 @Data
 @NoArgsConstructor

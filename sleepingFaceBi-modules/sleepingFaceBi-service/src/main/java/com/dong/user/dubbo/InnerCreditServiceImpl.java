@@ -12,11 +12,7 @@ import org.springframework.stereotype.Service;
 import com.dong.user.mapper.CreditMapper;
 
 /**
- * @author dong
- * @version 1.0
- * @project sleepingFaceBi-cloud
- * @description 远程积分业务实现
- * @date 2023/7/27 16:48:13
+ * 远程积分业务实现
  */
 
 @DubboService

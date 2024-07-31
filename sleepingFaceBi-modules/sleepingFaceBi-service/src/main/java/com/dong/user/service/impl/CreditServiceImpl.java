@@ -13,11 +13,7 @@ import com.dong.user.service.CreditService;
 import org.springframework.stereotype.Service;
 import com.dong.user.mapper.CreditMapper;
 
-/**
-* @author dong
-* @description 针对表【credit(积分表)】的数据库操作Service实现
-* @createDate 2023-06-28 21:29:40
-*/
+
 @Service
 public class CreditServiceImpl extends ServiceImpl<CreditMapper, Credit>
     implements CreditService {

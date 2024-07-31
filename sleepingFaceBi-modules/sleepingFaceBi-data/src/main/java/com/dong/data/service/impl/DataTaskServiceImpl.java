@@ -27,11 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
-* @author dong
-* @description 针对表【Data_task(文本任务表)】的数据库操作Service实现
-* @createDate 2023-07-12 20:32:15
-*/
+
 @Service
 public class DataTaskServiceImpl extends ServiceImpl<DataTaskMapper, DataTask>
     implements DataTaskService {

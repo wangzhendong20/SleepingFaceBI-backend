@@ -8,11 +8,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
 /**
- * @author YangBoss
- * @title: CorsConfig
- * @projectName frontop-geo-cloud
- * @description: TODO
- * @date 2023/1/30 17:57
  * 跨域配置
  */
 @Configuration

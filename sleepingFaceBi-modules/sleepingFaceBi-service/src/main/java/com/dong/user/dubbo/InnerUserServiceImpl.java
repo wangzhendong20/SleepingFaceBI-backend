@@ -14,11 +14,7 @@ import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.stereotype.Service;
 
 /**
- * @author dong
- * @version 1.0
- * @project sleepingFaceBi-cloud
- * @description 远程user业务服务
- * @date 2023/7/27 16:12:24
+ * 远程user业务服务
  */
 @DubboService
 @Service

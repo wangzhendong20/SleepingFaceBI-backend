@@ -4,11 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.dong.user.api.model.entity.Credit;
 
 
-/**
-* @author dong
-* @description 针对表【credit(积分表)】的数据库操作Service
-* @createDate 2023-06-28 21:29:40
-*/
+
 public interface CreditService extends IService<Credit> {
     /**
      * 根据 当前用户ID 获取积分总数

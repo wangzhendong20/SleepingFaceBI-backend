@@ -8,13 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-/**
- * @author dong
- * @version 1.0
- * @project sleepingFaceBi-cloud
- * @description chart启动类
- * @date 2023/7/25 21:33:13
- */
+
 @SpringBootApplication
 @EnableDubbo
 @Slf4j

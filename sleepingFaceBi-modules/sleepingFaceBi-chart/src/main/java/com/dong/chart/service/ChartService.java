@@ -6,11 +6,7 @@ import com.dong.chart.api.model.entity.Chart;
 import com.dong.user.api.model.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
-* @author dong
-* @description 针对表【chart(图表信息表)】的数据库操作Service
-* @createDate 2023-05-26 23:18:07
-*/
+
 public interface ChartService extends IService<Chart> {
 
     /**

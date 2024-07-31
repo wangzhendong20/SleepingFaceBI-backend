@@ -12,9 +12,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * @author ltyzzz
- * @email ltyzzz2000@gmail.com
- * @date 2023/3/5 20:34
  * 网关返回异常
  */
 @Slf4j

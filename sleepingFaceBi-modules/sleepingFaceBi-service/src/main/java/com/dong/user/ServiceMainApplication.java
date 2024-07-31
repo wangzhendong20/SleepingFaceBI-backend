@@ -9,13 +9,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-/**
- * @author dong
- * @version 1.0
- * @project sleepingFaceBi-cloud
- * @description service启动类
- * @date 2023/7/25 20:49:42
- */
+
 // todo 如需开启 Redis，须移除 exclude 中的内容
 @SpringBootApplication
 @MapperScan("com.dong.user.mapper")

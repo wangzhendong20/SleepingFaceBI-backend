@@ -25,11 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ORIGINAL_REQUEST_URL_ATTR;
 
-/**
- * @author ltyzzz
- * @email ltyzzz2000@gmail.com
- * @date 2023/3/5 20:30
- */
+
 public class WebFluxUtils {
 
     /**

@@ -9,11 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 
-/**
- * @author ltyzzz
- * @email ltyzzz2000@gmail.com
- * @date 2023/3/5 20:41
- */
+
 @Configuration
 public class AuthFilter {
 

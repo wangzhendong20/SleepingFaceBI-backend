@@ -8,11 +8,7 @@ import com.dong.data.api.model.entity.DataTask;
 import com.dong.user.api.model.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
-* @author dong
-* @description 针对表【Data_task(文本任务表)】的数据库操作Service
-* @createDate 2023-07-12 20:32:15
-*/
+
 public interface DataTaskService extends IService<DataTask> {
 
     /**

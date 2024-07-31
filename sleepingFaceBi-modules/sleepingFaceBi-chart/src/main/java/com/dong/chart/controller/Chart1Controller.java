@@ -8,13 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
-/**
- * @author dong
- * @version 1.0
- * @project sleepingFaceBi-cloud
- * @description service服务层
- * @date 2023/7/25 20:55:04
- */
+
 @RestController
 @Validated
 @RequestMapping("/chart1")

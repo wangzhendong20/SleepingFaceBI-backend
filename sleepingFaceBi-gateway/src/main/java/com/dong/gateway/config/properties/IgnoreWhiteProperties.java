@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author ltyzzz
- * @email ltyzzz2000@gmail.com
- * @date 2023/3/5 20:38
  * 白名单
  */
 @Data
