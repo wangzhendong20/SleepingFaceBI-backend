@@ -90,6 +90,7 @@ public class BiMessageConsumer {
 //        }
         //处理返回的数据
         try {
+//            System.out.println("result:" + result);
             boolean saveResult = chartService.saveChartAiResult(result, chart.getId());
             if (!saveResult){
                 chartService.handleChartUpdateError(chart.getId(), "图表数据保存失败");

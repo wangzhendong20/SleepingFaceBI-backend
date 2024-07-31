@@ -69,3 +69,23 @@
 ![image](assest/register.png)
 ### 首页
 ![image](assest/MyInfo.png)
+### 智能图表分析
+![image](assest/智能图表分析.png)
+### 智能文本分析
+![image](assest/智能文本分析.png)
+### 智能数据处理
+#### 格式转换
+![](assest/格式转换.png)
+#### 数据清洗
+![](assest/数据清洗.png)
+#### 数据筛选
+![](assest/筛选.png)
+#### 数据表格
+![](assest/表格生成.png)
+### 我的图表
+![image](assest/图表.png)
+### 我的文本
+![image](assest/文本.png)
+![image](assest/text1.png)
+### 我的数据
+![](assest/我的数据.png)
