@@ -1,24 +1,36 @@
 package com.dong.text.readerStrategy;
 
-import com.dong.text.readerStrategy.impl.DocFileReaderStrategy;
-import com.dong.text.readerStrategy.impl.DocxFileReaderStrategy;
-import com.dong.text.readerStrategy.impl.MdFileReaderStrategy;
-import com.dong.text.readerStrategy.impl.TxtFileReaderStrategy;
+import com.dong.text.config.ReadFileTypeConfig;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import javax.annotation.Resource;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class FileReaderFactory {
-    private static final Map<String, FileReaderStrategy> strategyMap = new HashMap<>();
+@Component
+public class FileReaderFactory implements ApplicationContextAware {
 
-    static {
-        strategyMap.put("txt", new TxtFileReaderStrategy());
-        strategyMap.put("md", new MdFileReaderStrategy());
-        strategyMap.put("doc", new DocFileReaderStrategy());
-        strategyMap.put("docx", new DocxFileReaderStrategy());
+    @Resource
+    private ReadFileTypeConfig readFileTypeConfig;
+
+    private static Map<String, FileReaderStrategy> strategyMap = new ConcurrentHashMap<>();
+
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        readFileTypeConfig.getTypes().forEach((k, y) -> {
+            strategyMap.put(k, (FileReaderStrategy) applicationContext.getBean(y));
+        });
     }
 
-    public static FileReaderStrategy getStrategy(String suffix) {
-        return strategyMap.get(suffix);
+    /**
+     * 对外提供获取具体策略
+     */
+    public FileReaderStrategy getStrategy(String type) {
+        FileReaderStrategy fileReaderStrategy = strategyMap.get(type);
+        return fileReaderStrategy;
     }
 }

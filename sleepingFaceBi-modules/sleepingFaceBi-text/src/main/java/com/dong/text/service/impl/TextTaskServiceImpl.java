@@ -90,7 +90,7 @@ public class TextTaskServiceImpl extends ServiceImpl<TextTaskMapper, TextTask>
             textContentList = fileProcessor.processFile(suffix, multipartFile);
             // 处理读取到的文件内容
         } catch (IOException e) {
-            e.printStackTrace();
+            ThrowUtils.throwIf(true,ErrorCode.SYSTEM_ERROR,"文件读取失败");
         }
 
 
