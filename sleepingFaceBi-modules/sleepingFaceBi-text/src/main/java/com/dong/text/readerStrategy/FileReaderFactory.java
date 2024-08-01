@@ -10,6 +10,11 @@ import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/**
+ * 操作策略的上下文环境类 工具类
+ * 将策略整合起来 方便管理
+ */
 @Component
 public class FileReaderFactory implements ApplicationContextAware {
 
@@ -19,6 +24,18 @@ public class FileReaderFactory implements ApplicationContextAware {
     private static Map<String, FileReaderStrategy> strategyMap = new ConcurrentHashMap<>();
 
 
+    /**
+     * 从配置文件中读取策略信息存储到map中
+     * {
+     *     doc: docFileReaderStrategy
+     *     docx: docxFileReaderStrategy
+     *     md: mdFileReaderStrategy
+     *     txt: txtFileReaderStrategy
+     * }
+     *
+     * @param applicationContext
+     * @throws BeansException
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         readFileTypeConfig.getTypes().forEach((k, y) -> {

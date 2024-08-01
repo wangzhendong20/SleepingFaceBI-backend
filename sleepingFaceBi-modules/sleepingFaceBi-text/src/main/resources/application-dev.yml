@@ -110,7 +110,7 @@ sa-token:
 
 readfile:
   types:
-    doc: DocFileReaderStrategy
-    docx: DocxFileReaderStrategy
-    md: MdFileReaderStrategy
-    txt: TxtFileReaderStrategy
+    doc: docFileReaderStrategy
+    docx: docxFileReaderStrategy
+    md: mdFileReaderStrategy
+    txt: txtFileReaderStrategy

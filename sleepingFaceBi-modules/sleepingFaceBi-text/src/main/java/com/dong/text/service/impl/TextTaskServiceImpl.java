@@ -10,6 +10,7 @@ import com.dong.text.api.model.entity.TextRecord;
 import com.dong.text.api.model.entity.TextTask;
 import com.dong.text.mapper.TextTaskMapper;
 import com.dong.text.readerStrategy.FileProcessor;
+import com.dong.text.readerStrategy.FileReaderFactory;
 import com.dong.text.service.TextRecordService;
 import com.dong.text.service.TextTaskService;
 import com.dong.user.api.InnerCreditService;
@@ -86,12 +87,11 @@ public class TextTaskServiceImpl extends ServiceImpl<TextTaskMapper, TextTask>
 //        } else if (suffix.equals("docx")) {
 //            textContentList = TxtUtils.readerDocxFile(multipartFile);
 //        }
-        try {
-            textContentList = fileProcessor.processFile(suffix, multipartFile);
-            // 处理读取到的文件内容
-        } catch (IOException e) {
-            ThrowUtils.throwIf(true,ErrorCode.SYSTEM_ERROR,"文件读取失败");
+        textContentList = fileProcessor.processFile(suffix, multipartFile);
+        if (textContentList == null || textContentList.size() == 0) {
+            ThrowUtils.throwIf(true,ErrorCode.PARAMS_ERROR,"文件读取失败");
         }
+        // 处理读取到的文件内容
 
 
         ThrowUtils.throwIf(textContentList.size() ==0,ErrorCode.PARAMS_ERROR,"文件为空");
