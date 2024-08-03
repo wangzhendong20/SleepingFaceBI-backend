@@ -1,7 +1,5 @@
 package com.dong.common.utils;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -44,7 +42,6 @@ public class KeyGenerator {
             System.out.println("Generated AK: " + ak);
             System.out.println("Generated SK: " + sk);
 
-            // 存储逻辑这里省略，可以保存到数据库中
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
