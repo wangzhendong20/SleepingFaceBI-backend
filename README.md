@@ -15,6 +15,7 @@
 + + [x] 智能数据筛选
 + + [x] 智能数据表格
 + [x] 积分功能
++ [x] SDK开发
 + [❌] SleepingFace小助手(waiting)
 + + [x] 大白话->公文(v1.0)
 
@@ -25,8 +26,12 @@
 ## 服务模块设计
 - 服务模块：sleepingFaceBi-user（用户服务），sleepingFaceBi-chart（图表服务），sleepingFaceBi-text（文本服务），sleepingFaceBi-data（数据服务）。
 - 公共服务模块：sleepingFaceBi-common-ai(AI服务), sleepingFaceBi-common-configs(配置管理服务),sleepingFaceBi-common-commm(公共服务), sleepingFaceBi-common-mq(消息队列服务), sleepingFaceBi-common-mybatis
-- 实体模块：sleeingFaceBi-api(实体模块)
+- 远程调用模块：sleeingFaceBi-api
 - 网关模块：sleepingFaceBi-gateway(网关服务)
+
+## SDK开发模块
+- api-client-sdk
+只需引入依赖，配置ak/sk，即可调用API。
 
 ## 技术栈
 
@@ -89,3 +94,10 @@
 ![image](assest/text1.png)
 ### 我的数据
 ![](assest/我的数据.png)
+### SDK开发
+1.引入Maven依赖;
+![](assest/API1.png)
+2.配置ak/sd;
+![](assest/API2.png)
+3.调用API;
+![](assest/API3.png)

@@ -124,3 +124,14 @@ CREATE TABLE `data_record`  (
     `isDelete` tinyint(0) NOT NULL DEFAULT 0 COMMENT '是否删除',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '数据记录表' ROW_FORMAT = Dynamic;
+
+create table if not exists key_record
+(
+    id          bigint auto_increment comment 'id' primary key,
+    userId      bigint                             null comment '创建用户Id',
+    accessKey   varchar(512)                       not null comment 'accessKey',
+    secretKey   varchar(512)                       not null comment 'secretKey',
+    createTime  datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime  datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete    tinyint  default 0                 not null comment '是否删除'
+    ) comment 'API签名认证表' collate = utf8mb4_unicode_ci;

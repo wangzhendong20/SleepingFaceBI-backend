@@ -114,3 +114,8 @@ readfile:
     docx: docxFileReaderStrategy
     md: mdFileReaderStrategy
     txt: txtFileReaderStrategy
+
+api:
+  client:
+    access-key: 123
+    secret-key: 123

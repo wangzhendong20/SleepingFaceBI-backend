@@ -4,8 +4,11 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dong.apiclientsdk.client.ApiClient;
 import com.dong.common.configs.manager.RedisLimiterManager;
 import com.dong.common.constant.LimitConstant;
+import com.dong.user.api.InnerKeyRecordService;
+import com.dong.user.api.model.entity.KeyRecord;
 import com.google.gson.Gson;
 import com.dong.common.ai.config.QianWenText;
 import com.dong.common.annotation.AuthCheck;
@@ -41,7 +44,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.dong.common.utils.SignUtils;
 
 /**
  * 格式转换接口
@@ -59,6 +65,8 @@ public class TextController {
     private TextRecordService textRecordService;
     @DubboReference
     private InnerUserService userService;
+    @DubboReference
+    private InnerKeyRecordService keyRecordService;
 
     @Resource
     private QianWenText qianWenText;
@@ -67,6 +75,10 @@ public class TextController {
 
     @Resource
     private RedisLimiterManager redisLimiterManager;
+
+    //自己的API接口
+    @Resource
+    private ApiClient apiClient;
 
     @Resource
     private MqMessageProducer mqMessageProducer;
@@ -406,6 +418,92 @@ public class TextController {
         log.warn("准备发送信息给队列，Message={}=======================================",textTaskId);
         mqMessageProducer.sendMessage(MqConstant.TEXT_EXCHANGE_NAME,MqConstant.TEXT_ROUTING_KEY,String.valueOf(textTaskId));
         //返回数据参数
+        AiResponse aiResponse = new AiResponse();
+        aiResponse.setResultId(textTask.getId());
+        return ResultUtils.success(aiResponse);
+
+    }
+
+    /**
+     * 文本数据API(同步)
+     *
+     * @return
+     */
+    @PostMapping("/api/gen")
+    public BaseResponse<AiResponse> genTextTaskAiAPI(HttpServletRequest request){
+
+        String accessKey = request.getHeader("accessKey");
+        String nonce = request.getHeader("nonce");
+        String timestamp = request.getHeader("timestamp");
+        String sign = request.getHeader("sign");
+        String body = request.getHeader("body");
+        String name = request.getHeader("name");
+        String textType = request.getHeader("textType");
+
+        KeyRecord keyRecord = keyRecordService.getKeyRecord(accessKey);
+        String secretKey = keyRecord.getSecretKey();
+        Long userId = keyRecord.getUserId();
+
+        String signStr = SignUtils.genSign(body,secretKey);
+        ThrowUtils.throwIf(!signStr.equals(sign),ErrorCode.FORBIDDEN_ERROR,"签名错误");
+
+        //保存数据库 wait
+        //保存任务进数据库
+        TextTask textTask = new TextTask();
+        textTask.setTextType(textType);
+        textTask.setName(name);
+        textTask.setUserId(userId);
+        textTask.setStatus(TextConstant.WAIT);
+        boolean saveResult = textTaskService.save(textTask);
+        ThrowUtils.throwIf(!saveResult,ErrorCode.SYSTEM_ERROR,"文本任务保存失败");
+
+        Long taskId = textTask.getId();
+
+        ArrayList<String> textContentList = new ArrayList<>();
+
+        TextRecord textRecord = new TextRecord();
+        textRecord.setTextTaskId(taskId);
+        textRecord.setTextContent(body);
+        textRecord.setStatus(TextConstant.WAIT);
+
+
+        boolean batchResult = textRecordService.save(textRecord);
+        ThrowUtils.throwIf(!batchResult,ErrorCode.SYSTEM_ERROR,"文本记录保存失败");
+
+        //从根据任务id记录表中获取数据
+        QueryWrapper<TextRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("textTaskId",taskId);
+        List<TextRecord> textRecords = textRecordService.list(queryWrapper);
+
+        //将文本依次交给ai处理
+        for (TextRecord textrecord : textRecords) {
+            String result = null;
+            try {
+                result = qianWenText.callWithMessage(textRecordService.buildUserInput(textrecord,textType).toString());
+            } catch (Exception e) {
+                ThrowUtils.throwIf(true,ErrorCode.SYSTEM_ERROR,"ai接口调用失败");
+            }
+            textrecord.setGenTextContent(result);
+            textrecord.setStatus(TextConstant.SUCCEED);
+            boolean updateById = textRecordService.updateById(textrecord);
+            if (!updateById){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"ai返回结果保存失败");
+            }
+        }
+
+
+        //将记录表中已经生成好的内容合并存入任务表
+        List<TextRecord> textRecord2 = textRecordService.list(queryWrapper);
+        StringBuilder stringBuilder = new StringBuilder();
+        textRecord2.forEach(textRecord1 -> {
+            stringBuilder.append(textRecord1.getGenTextContent()).append('\n');
+        });
+        TextTask textTask1 = new TextTask();
+        textTask1.setId(taskId);
+        textTask1.setGenTextContent(stringBuilder.toString());
+        textTask1.setStatus(TextConstant.SUCCEED);
+        boolean save = textTaskService.updateById(textTask1);
+        ThrowUtils.throwIf(!save,ErrorCode.SYSTEM_ERROR,"ai返回文本任务保存失败");
         AiResponse aiResponse = new AiResponse();
         aiResponse.setResultId(textTask.getId());
         return ResultUtils.success(aiResponse);
