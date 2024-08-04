@@ -31,7 +31,7 @@ public class ApiClient {
     @Resource
     private FileProcessor fileProcessor;
 
-    private Map<String, String> getHeaderMap(String body,String name, String textType) {
+    private Map<String, String> getHeaderMap(String body, String name, String textType) {
         Map<String, String> hashMap = new HashMap<>();
         hashMap.put("accessKey", accessKey);
         // 一定不能直接发送
@@ -72,6 +72,4 @@ public class ApiClient {
         return result;
 
     }
-
-
 }
