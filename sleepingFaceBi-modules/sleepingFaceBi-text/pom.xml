@@ -77,7 +77,6 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
         <!--        sa-token-->
-
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-boot-starter</artifactId>
@@ -134,6 +133,7 @@
             <artifactId>sleepingFaceBi-common-configs</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
         <!--阿里巴巴大模型-->
         <!-- https://mvnrepository.com/artifact/com.alibaba/dashscope-sdk-java -->
         <dependency>
