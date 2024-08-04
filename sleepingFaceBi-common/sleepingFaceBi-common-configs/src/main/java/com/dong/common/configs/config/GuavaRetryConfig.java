@@ -20,7 +20,7 @@ public class GuavaRetryConfig {
                 .retryIfResult(Predicates.isNull()) // 如果结果为空则重试
                 .retryIfExceptionOfType(BusinessException.class) // 发生自定义异常则重试
 //                .retryIfRuntimeException() // 发生运行时异常则重试
-                .withWaitStrategy(WaitStrategies.incrementingWait(10, TimeUnit.SECONDS, 10, TimeUnit.SECONDS)) // 等待
+                .withWaitStrategy(WaitStrategies.incrementingWait(10, TimeUnit.SECONDS, 60, TimeUnit.SECONDS)) // 等待
                 .withStopStrategy(StopStrategies.stopAfterAttempt(4)) // 允许执行4次（首次执行 + 最多重试3次）
                 .build();
     }
