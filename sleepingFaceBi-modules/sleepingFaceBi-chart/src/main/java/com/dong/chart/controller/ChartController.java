@@ -15,6 +15,7 @@ import com.dong.common.common.BaseResponse;
 import com.dong.common.common.DeleteRequest;
 import com.dong.common.common.ErrorCode;
 import com.dong.common.common.ResultUtils;
+import com.dong.common.configs.config.ThreadPoolExecutorConfig;
 import com.dong.common.configs.manager.RedisLimiterManager;
 import com.dong.common.constant.CommonConstant;
 import com.dong.common.constant.LimitConstant;
@@ -37,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 图表分析接口
@@ -63,6 +65,9 @@ public class ChartController {
 
     @Resource
     private RedisLimiterManager redisLimiterManager;
+
+    @Resource
+    private ThreadPoolExecutor threadPoolExecutor;
 
     // region 增删改查
 
