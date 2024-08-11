@@ -26,7 +26,7 @@ public class ThreadPoolExecutorConfig {
             }
         };
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, 20, 120, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(100), threadFactory);
+                new ArrayBlockingQueue<>(100), threadFactory, new ThreadPoolExecutor.DiscardOldestPolicy());
         return threadPoolExecutor;
     }
 }
