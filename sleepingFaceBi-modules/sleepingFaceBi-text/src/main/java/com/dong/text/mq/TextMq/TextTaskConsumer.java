@@ -1,25 +1,18 @@
 package com.dong.text.mq.TextMq;
 
-import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dong.common.ai.config.QianWenText;
-import com.dong.common.common.ErrorCode;
 import com.dong.common.configs.config.GuavaRetryConfig;
-import com.dong.common.configs.config.RetryConfig;
+import com.dong.common.configs.config.SpringRetryConfig;
 import com.dong.common.constant.MqConstant;
-import com.dong.common.excption.BusinessException;
 import com.dong.common.mq.config.MqMessageProducer;
 import com.dong.text.api.constant.TextConstant;
-import com.dong.text.api.model.entity.TextRecord;
 import com.dong.text.api.model.entity.TextTask;
 import com.dong.text.service.TextRecordService;
 import com.dong.text.service.TextTaskService;
-import com.github.rholder.retry.Retryer;
 import com.rabbitmq.client.Channel;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -27,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * 文本转换消费者队列
@@ -41,14 +33,6 @@ public class TextTaskConsumer {
 
     @Resource
     private TextRecordService textRecordService;
-
-    @Resource
-    private RetryConfig retryConfig;
-    @Resource
-    private GuavaRetryConfig guavaRetryConfig;
-
-    @Resource
-    private QianWenText qianWenText;
 
     @Resource
     private MqMessageProducer mqMessageProducer;

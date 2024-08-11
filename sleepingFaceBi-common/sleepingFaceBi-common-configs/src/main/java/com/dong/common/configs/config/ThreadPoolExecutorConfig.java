@@ -4,10 +4,7 @@ import com.sun.istack.internal.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Configuration
 public class ThreadPoolExecutorConfig {
@@ -25,8 +22,16 @@ public class ThreadPoolExecutorConfig {
                 return thread;
             }
         };
+//        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, 20, 120, TimeUnit.SECONDS,
+//                new ArrayBlockingQueue<>(100), threadFactory, new ThreadPoolExecutor.DiscardPolicy());
+
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, 20, 120, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(100), threadFactory, new ThreadPoolExecutor.DiscardPolicy());
+                new ResizableCapacityLinkedBlockingQueue<>(100), threadFactory, new ThreadPoolExecutor.DiscardPolicy());
+
+        threadPoolExecutor.prestartAllCoreThreads();
+
         return threadPoolExecutor;
+
     }
+
 }

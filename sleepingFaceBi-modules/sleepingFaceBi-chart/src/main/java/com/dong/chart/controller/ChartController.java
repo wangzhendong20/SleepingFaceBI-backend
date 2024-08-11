@@ -17,6 +17,7 @@ import com.dong.common.common.ErrorCode;
 import com.dong.common.common.ResultUtils;
 import com.dong.common.configs.config.ThreadPoolExecutorConfig;
 import com.dong.common.configs.manager.RedisLimiterManager;
+import com.dong.common.configs.manager.ThreadPoolExecutorManager;
 import com.dong.common.constant.CommonConstant;
 import com.dong.common.constant.LimitConstant;
 import com.dong.common.constant.MqConstant;
@@ -38,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -299,52 +301,61 @@ public class ChartController {
 
     }
 
-//    /**
-//     * 图表数据上传(异步)
-//     *
-//     * @param multipartFile
-//     * @param genChartByAiRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/gen/async")
-//    public BaseResponse<AiResponse> genChartAsyncAi(@RequestPart("file") MultipartFile multipartFile,
-//                                                    GenChartByAiRequest genChartByAiRequest, HttpServletRequest request) {
-//
-//        User loginUser = userService.getLoginUser(request);
-//        //获取任务表数据
-//        Chart chartTask = chartService.getChartTask(multipartFile, genChartByAiRequest, loginUser);
-//
-//        //todo 需要处理队列满后的异常
-//        try {
-//            CompletableFuture.runAsync(()->{
-//                //更改图片状态为 running
-//                Chart updateChart = new Chart();
-//                updateChart.setId(chartTask.getId());
-//                updateChart.setStatus(ChartConstant.RUNNING);
-//                boolean updateResult = chartService.updateById(updateChart);
-//                if (!updateResult){
-//                    chartService.handleChartUpdateError(chartTask.getId(),"更新图表执行状态失败");
-//                    return;
-//                }
-//                //调用AI
-//                String result = aiManager.doChat(chartService.buildUserInput(chartTask),ChartConstant.MODE_ID);
-//                //处理返回的数据
-//                boolean saveResult = chartService.saveChartAiResult(result, chartTask.getId());
-//                if (!saveResult){
-//                    chartService.handleChartUpdateError(chartTask.getId(), "图表数据保存失败");
-//                }
-//            },threadPoolExecutor);
-//        } catch (Exception e) {
-//            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统繁忙，请稍后重试");
-//        }
-//        //返回数据参数
-//        AiResponse aiResponse = new AiResponse();
-//        aiResponse.setResultId(chartTask.getId());
-//        return ResultUtils.success(aiResponse);
-//
-//    }
-//
+
+    @Resource
+    private ThreadPoolExecutorManager threadPoolExecutorManager;
+    /**
+     * 图表数据上传(异步)
+     *
+     * @param multipartFile
+     * @param genChartByAiRequest
+     * @return
+     */
+    @PostMapping("/gen/async/threadpool")
+    public BaseResponse<AiResponse> genChartAsyncAi(@RequestPart("file") MultipartFile multipartFile,
+                                                    GenChartByAiRequest genChartByAiRequest) {
+
+        User loginUser = userService.getLoginUser();
+        //获取任务表数据
+        Chart chartTask = chartService.getChartTask(multipartFile, genChartByAiRequest, loginUser);
+
+        threadPoolExecutorManager.dynamicModify(20, 40, 200, true);
+
+        //todo 需要处理队列满后的异常
+        try {
+            CompletableFuture.runAsync(()->{
+                //更改图片状态为 running
+                Chart updateChart = new Chart();
+                updateChart.setId(chartTask.getId());
+                updateChart.setStatus(ChartConstant.RUNNING);
+                boolean updateResult = chartService.updateById(updateChart);
+                if (!updateResult){
+                    chartService.handleChartUpdateError(chartTask.getId(),"更新图表执行状态失败");
+                    return;
+                }
+                //调用AI
+                String result = null;
+                try {
+                    result = qianWenChart.callWithMessage(chartService.buildUserInput(updateChart).toString());
+                } catch (Exception e) {
+                    throw new BusinessException(ErrorCode.SYSTEM_ERROR,"AI 服务错误");
+                }
+                //处理返回的数据
+                boolean saveResult = chartService.saveChartAiResult(result, chartTask.getId());
+                if (!saveResult){
+                    chartService.handleChartUpdateError(chartTask.getId(), "图表数据保存失败");
+                }
+            },threadPoolExecutor);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统繁忙，请稍后重试");
+        }
+        //返回数据参数
+        AiResponse aiResponse = new AiResponse();
+        aiResponse.setResultId(chartTask.getId());
+        return ResultUtils.success(aiResponse);
+
+    }
+
     /**
      * 图表数据上传(mq)
      *

@@ -1,4 +1,5 @@
 com.dong.common.configs.manager.RedisLimiterManager
-com.dong.common.configs.config.RetryConfig
+com.dong.common.configs.config.SpringRetryConfig
 com.dong.common.configs.config.GuavaRetryConfig
-
+com.dong.common.configs.config.ThreadPoolExecutorConfig
+com.dong.common.configs.manager.ThreadPoolExecutorManager

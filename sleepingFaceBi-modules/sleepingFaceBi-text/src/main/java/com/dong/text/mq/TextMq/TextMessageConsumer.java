@@ -4,8 +4,6 @@ import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dong.common.ai.config.QianWenText;
 import com.dong.common.common.ErrorCode;
-import com.dong.common.configs.config.GuavaRetryConfig;
-import com.dong.common.configs.config.RetryConfig;
 import com.dong.common.constant.MqConstant;
 import com.dong.common.excption.BusinessException;
 import com.dong.text.api.constant.TextConstant;
@@ -14,7 +12,6 @@ import com.dong.text.api.model.entity.TextTask;
 import com.dong.text.service.TextRecordService;
 import com.dong.text.service.TextTaskService;
 import com.github.rholder.retry.*;
-import com.google.common.base.Predicates;
 import com.rabbitmq.client.Channel;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +23,8 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 文本转换消费者队列
@@ -46,9 +40,9 @@ public class TextMessageConsumer {
     private TextRecordService textRecordService;
 
     @Resource
-    private RetryConfig retryConfig;
+    private Retryer<String> guavaRetryer;
     @Resource
-    private GuavaRetryConfig guavaRetryConfig;
+    private RetryTemplate springRetryTemplate;
 
     @Resource
     private QianWenText qianWenText;
@@ -91,7 +85,7 @@ public class TextMessageConsumer {
             Callable<String> callable = () -> {
                 return qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString()); // 业务逻辑
             };
-            Retryer<String> retryer = guavaRetryConfig.retryer();
+            Retryer<String> retryer = guavaRetryer;
             try {
                 result = retryer.call(callable); // 执行
             } catch (Exception e) { // 重试次数超过阈值或被强制中断
@@ -101,7 +95,7 @@ public class TextMessageConsumer {
             }
 
 //            // Spring Retry
-//            RetryTemplate retryTemplate = retryConfig.retryTemplate();
+//            RetryTemplate retryTemplate = springRetryTemplate;
 //            result = retryTemplate.execute(retryCallback -> {
 //                return qianWenText.callWithMessage(textRecordService.buildUserInput(textRecord,textTask.getTextType()).toString()); // 业务逻辑
 //            }, recoveryCallback -> {
