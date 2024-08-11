@@ -142,14 +142,17 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
     }
 
     /** The capacity bound, or Integer.MAX_VALUE if none */
-    private volatile int capacity;
+//    private final int capacity;
+
+    // final 是确保 capacity 变量的引用不可变。
+    private final AtomicInteger capacity;
 
     public int getCapacity() {
-        return capacity;
+        return capacity.get();
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
+    public void setCapacity(int newCapacity) {
+        capacity.set(newCapacity);
     }
 
     /** Current number of elements */
@@ -275,7 +278,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
      */
     public ResizableCapacityLinkedBlockingQueue(int capacity) {
         if (capacity <= 0) throw new IllegalArgumentException();
-        this.capacity = capacity;
+        this.capacity = new AtomicInteger(capacity);
         last = head = new Node<E>(null);
     }
 
@@ -298,7 +301,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
             for (E e : c) {
                 if (e == null)
                     throw new NullPointerException();
-                if (n == capacity)
+                if (n == capacity.get())
                     throw new IllegalStateException("Queue full");
                 enqueue(new Node<E>(e));
                 ++n;
@@ -334,7 +337,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
      * insert or remove an element.
      */
     public int remainingCapacity() {
-        return capacity - count.get();
+        return capacity.get() - count.get();
     }
 
     /**
@@ -362,12 +365,12 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
              * signalled if it ever changes from capacity. Similarly
              * for all other uses of count in other wait guards.
              */
-            while (count.get() == capacity) {
+            while (count.get() == capacity.get()) {
                 notFull.await();
             }
             enqueue(node);
             c = count.getAndIncrement();
-            if (c + 1 < capacity)
+            if (c + 1 < capacity.get())
                 notFull.signal();
         } finally {
             putLock.unlock();
@@ -395,14 +398,14 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
         final AtomicInteger count = this.count;
         putLock.lockInterruptibly();
         try {
-            while (count.get() == capacity) {
+            while (count.get() == capacity.get()) {
                 if (nanos <= 0)
                     return false;
                 nanos = notFull.awaitNanos(nanos);
             }
             enqueue(new Node<E>(e));
             c = count.getAndIncrement();
-            if (c + 1 < capacity)
+            if (c + 1 < capacity.get())
                 notFull.signal();
         } finally {
             putLock.unlock();
@@ -426,17 +429,17 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
     public boolean offer(E e) {
         if (e == null) throw new NullPointerException();
         final AtomicInteger count = this.count;
-        if (count.get() == capacity)
+        if (count.get() == capacity.get())
             return false;
         int c = -1;
         Node<E> node = new Node<E>(e);
         final ReentrantLock putLock = this.putLock;
         putLock.lock();
         try {
-            if (count.get() < capacity) {
+            if (count.get() < capacity.get()) {
                 enqueue(node);
                 c = count.getAndIncrement();
-                if (c + 1 < capacity)
+                if (c + 1 < capacity.get())
                     notFull.signal();
             }
         } finally {
@@ -464,7 +467,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c == capacity)
+        if (c == capacity.get())
             signalNotFull();
         return x;
     }
@@ -489,7 +492,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c == capacity)
+        if (c == capacity.get())
             signalNotFull();
         return x;
     }
@@ -512,7 +515,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c == capacity)
+        if (c == capacity.get())
             signalNotFull();
         return x;
     }
@@ -544,7 +547,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
         trail.next = p.next;
         if (last == p)
             last = trail;
-        if (count.getAndDecrement() == capacity)
+        if (count.getAndDecrement() == capacity.get())
             notFull.signal();
     }
 
@@ -715,7 +718,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
             }
             head = last;
             // assert head.item == null && head.next == null;
-            if (count.getAndSet(0) == capacity)
+            if (count.getAndSet(0) == capacity.get())
                 notFull.signal();
         } finally {
             fullyUnlock();
@@ -768,7 +771,7 @@ public class ResizableCapacityLinkedBlockingQueue<E> extends AbstractQueue<E>
                 if (i > 0) {
                     // assert h.item == null;
                     head = h;
-                    signalNotFull = (count.getAndAdd(-i) == capacity);
+                    signalNotFull = (count.getAndAdd(-i) == capacity.get());
                 }
             }
         } finally {
