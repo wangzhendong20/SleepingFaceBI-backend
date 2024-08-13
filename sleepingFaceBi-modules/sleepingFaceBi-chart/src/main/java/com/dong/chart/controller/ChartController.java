@@ -29,18 +29,31 @@ import com.dong.common.utils.SqlUtils;
 import com.dong.user.api.InnerUserService;
 import com.dong.user.api.constant.UserConstant;
 import com.dong.user.api.model.entity.User;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static com.dong.common.constant.RedisConstant.CACHE_CHARTS_USER;
+import static com.dong.common.constant.RedisConstant.MUTEX_CHARTS_KEY;
 
 /**
  * 图表分析接口
@@ -70,6 +83,15 @@ public class ChartController {
 
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private Gson gson;
+
+    @Resource
+    private RedissonClient redissonClient;
 
     // region 增删改查
 
@@ -213,8 +235,79 @@ public class ChartController {
         long size = chartQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Chart> chartPage = chartService.page(new Page<>(current, size),
-                getQueryWrapper(chartQueryRequest));
+
+        //添加redis作为缓存，提高速度
+        String key = CACHE_CHARTS_USER + chartQueryRequest.getUserId();
+        String cacheChartList = stringRedisTemplate.opsForValue().get(key);
+
+        if (!StringUtils.isEmpty(cacheChartList)) {
+            try {
+                List<Chart> chartList = gson.fromJson(cacheChartList,new TypeToken<List<Chart>>(){}.getType());
+                Page<Chart> chartPage = new Page<>();
+                if(StringUtils.isEmpty(chartQueryRequest.getName())){
+                    //返回全部
+                    chartPage.setRecords(chartList);
+                    chartPage.setTotal(chartList.size());
+                }else{
+                    //返回指定的图表
+                    List<Chart> myChartList = chartList.stream().filter((chart)->{
+                        //用contains代替模糊查询
+                        return chart.getName().contains(chartQueryRequest.getName());
+                    }).collect(Collectors.toList());
+
+                    chartPage.setRecords(myChartList);
+                    chartPage.setTotal(myChartList.size());
+                }
+
+                return ResultUtils.success(chartPage);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                //如果一旦发生错误，那么就使用数据库查询
+                Page<Chart> chartPage = chartService.page(new Page<>(current, size), getQueryWrapper(chartQueryRequest));
+                return ResultUtils.success(chartPage);
+            }
+        }
+
+        //防止缓存穿透,返回一个空值
+        if(cacheChartList != null){
+            return ResultUtils.success(new Page<Chart>());
+        }
+
+        //防止缓存击穿，使用互斥锁让线程排队
+        RLock lock = redissonClient.getLock(MUTEX_CHARTS_KEY + chartQueryRequest.getUserId());
+        Page<Chart> chartPage = null;
+
+        try {
+            //尝试获得锁
+            boolean b = lock.tryLock();
+            //没有获得锁，重试
+            if (!b){
+                return listMyChartByPage(chartQueryRequest);
+            }
+            //否则，就直接去数据库查询
+            chartPage = chartService.page(new Page<>(current, size),
+                    getQueryWrapper(chartQueryRequest));
+            if(chartPage.getRecords().isEmpty()){
+                //并在查询后，向缓存添加信息
+                String myChartListJson = gson.toJson(chartPage.getRecords());
+                //设置较短的TTL
+                stringRedisTemplate.opsForValue().set(key,myChartListJson,5, TimeUnit.MINUTES);
+                return ResultUtils.success(chartPage);
+            }
+            //并在查询后，向缓存添加信息
+            String myChartListJson = gson.toJson(chartPage.getRecords());
+            //必须添加过期时间，因为Redis的内存并不能扩充
+            stringRedisTemplate.opsForValue().set(key,myChartListJson,12, TimeUnit.HOURS);
+        }catch (Exception e){
+            ThrowUtils.throwIf(true, ErrorCode.SYSTEM_ERROR,"系统错误，请稍后重试");
+        }finally {
+            lock.unlock();
+        }
+
+
+//        Page<Chart> chartPage = chartService.page(new Page<>(current, size),
+//                getQueryWrapper(chartQueryRequest));
         return ResultUtils.success(chartPage);
     }
 

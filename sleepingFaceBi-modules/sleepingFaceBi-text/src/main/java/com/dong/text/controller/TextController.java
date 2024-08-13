@@ -34,11 +34,15 @@ import com.dong.user.api.InnerCreditService;
 import com.dong.user.api.InnerUserService;
 import com.dong.user.api.constant.UserConstant;
 import com.dong.user.api.model.entity.User;
+import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,8 +50,12 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.dong.common.utils.SignUtils;
+
+import static com.dong.common.constant.RedisConstant.*;
 
 /**
  * 格式转换接口
@@ -82,6 +90,16 @@ public class TextController {
 
     @Resource
     private MqMessageProducer mqMessageProducer;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedissonClient redissonClient;
+
+    @Resource
+    private Gson gson;
+
     private final static Gson GSON = new Gson();
 
     // region 增删改查
@@ -249,8 +267,78 @@ public class TextController {
         long size = textTaskQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<TextTask> textTaskPage = textTaskService.page(new Page<>(current, size),
-                getQueryWrapper(textTaskQueryRequest));
+
+        //添加redis作为缓存，提高速度
+        String key = CACHE_TEXT_USER + textTaskQueryRequest.getUserId();
+        String cachetextTaskList = stringRedisTemplate.opsForValue().get(key);
+
+        if (!StringUtils.isEmpty(cachetextTaskList)) {
+            try {
+                List<TextTask> textTaskList = gson.fromJson(cachetextTaskList,new TypeToken<List<TextTask>>(){}.getType());
+                Page<TextTask> textTaskPage = new Page<>();
+                if(StringUtils.isEmpty(textTaskQueryRequest.getName())){
+                    //返回全部
+                    textTaskPage.setRecords(textTaskList);
+                    textTaskPage.setTotal(textTaskList.size());
+                }else{
+                    //返回指定的图表
+                    List<TextTask> mytextTaskList = textTaskList.stream().filter((TextTask)->{
+                        //用contains代替模糊查询
+                        return TextTask.getName().contains(textTaskQueryRequest.getName());
+                    }).collect(Collectors.toList());
+
+                    textTaskPage.setRecords(mytextTaskList);
+                    textTaskPage.setTotal(mytextTaskList.size());
+                }
+
+                return ResultUtils.success(textTaskPage);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                //如果一旦发生错误，那么就使用数据库查询
+                Page<TextTask> textTaskPage = textTaskService.page(new Page<>(current, size), getQueryWrapper(textTaskQueryRequest));
+                return ResultUtils.success(textTaskPage);
+            }
+        }
+
+        //防止缓存穿透,返回一个空值
+        if(cachetextTaskList != null){
+            return ResultUtils.success(new Page<TextTask>());
+        }
+
+        //防止缓存击穿，使用互斥锁让线程排队
+        RLock lock = redissonClient.getLock(MUTEX_TEXT_KEY + textTaskQueryRequest.getUserId());
+        Page<TextTask> textTaskPage = null;
+
+        try {
+            //尝试获得锁
+            boolean b = lock.tryLock();
+            //没有获得锁，重试
+            if (!b){
+                return listMyTextTaskByPage(textTaskQueryRequest);
+            }
+            //否则，就直接去数据库查询
+            textTaskPage = textTaskService.page(new Page<>(current, size),
+                    getQueryWrapper(textTaskQueryRequest));
+            if(textTaskPage.getRecords().isEmpty()){
+                //并在查询后，向缓存添加信息
+                String mytextTaskListJson = gson.toJson(textTaskPage.getRecords());
+                //设置较短的TTL
+                stringRedisTemplate.opsForValue().set(key,mytextTaskListJson,5, TimeUnit.MINUTES);
+                return ResultUtils.success(textTaskPage);
+            }
+            //并在查询后，向缓存添加信息
+            String mytextTaskListJson = gson.toJson(textTaskPage.getRecords());
+            //必须添加过期时间，因为Redis的内存并不能扩充
+            stringRedisTemplate.opsForValue().set(key,mytextTaskListJson,12, TimeUnit.HOURS);
+        }catch (Exception e){
+            ThrowUtils.throwIf(true, ErrorCode.SYSTEM_ERROR,"系统错误，请稍后重试");
+        }finally {
+            lock.unlock();
+        }
+
+//        Page<TextTask> textTaskPage = textTaskService.page(new Page<>(current, size),
+//                getQueryWrapper(textTaskQueryRequest));
         return ResultUtils.success(textTaskPage);
     }
 
