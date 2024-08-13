@@ -21,7 +21,7 @@ import java.util.List;
 public class QianWenText {
     public String callWithMessage(String message) throws NoApiKeyException, ApiException, InputRequiredException
     {
-        Constants.apiKey="sk-8152bde853e3482ab1a0b5d2a02ab70f";
+        Constants.apiKey="your api key";
         Generation gen = new Generation();
         MessageManager msgManager = new MessageManager(10);
         Message systemMsg =
@@ -54,7 +54,7 @@ public class QianWenText {
 
     public String callWithMessageSummary(String message) throws NoApiKeyException, ApiException, InputRequiredException
     {
-        Constants.apiKey="sk-8152bde853e3482ab1a0b5d2a02ab70f";
+        Constants.apiKey="your api key";
         Generation gen = new Generation();
         MessageManager msgManager = new MessageManager(10);
         Message systemMsg =
