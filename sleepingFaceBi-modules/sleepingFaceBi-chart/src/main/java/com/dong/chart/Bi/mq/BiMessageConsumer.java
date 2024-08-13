@@ -37,7 +37,7 @@ public class BiMessageConsumer {
     private QianWenChart qianWenChart;
 
     @Resource
-    private GuavaRetryConfig guavaRetryConfig;
+    private Retryer<String> guavaRetryer;
 
     @SneakyThrows
     @RabbitListener(queues = {MqConstant.BI_QUEUE_NAME},ackMode = "MANUAL")
@@ -71,7 +71,7 @@ public class BiMessageConsumer {
         Callable<String> callable = () -> {
             return qianWenChart.callWithMessage(chartService.buildUserInput(chart).toString());
         };
-        Retryer<String> retryer = guavaRetryConfig.retryer();
+        Retryer<String> retryer = guavaRetryer;
         try {
             result = retryer.call(callable); // 执行
         } catch (Exception e) { // 重试次数超过阈值或被强制中断
