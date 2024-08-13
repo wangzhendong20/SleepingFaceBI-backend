@@ -140,6 +140,17 @@ public class MqInitMain {
     }
 
     @Bean
+    Queue SecondBiQueue() {
+        // 第二个队列的参数
+        Map<String, Object> arg = new HashMap<>();
+        arg.put("x-message-ttl", 6000); // 设置TTL为2min
+        // 绑定死信交换机
+        arg.put("x-dead-letter-exchange", MqConstant.BI_DEAD_EXCHANGE_NAME);
+        arg.put("x-dead-letter-routing-key", MqConstant.BI_DEAD_ROUTING_KEY);
+        return QueueBuilder.durable(MqConstant.BI_SECOND_QUEUE_NAME).withArguments(arg).build();
+    }
+
+    @Bean
     DirectExchange BiExchange() {
         return new DirectExchange(MqConstant.BI_EXCHANGE_NAME);
     }
@@ -147,6 +158,11 @@ public class MqInitMain {
     @Bean
     Binding BiBinding(Queue BiQueue, DirectExchange BiExchange) {
         return BindingBuilder.bind(BiQueue).to(BiExchange).with(MqConstant.BI_ROUTING_KEY);
+    }
+
+    @Bean
+    Binding BiSecondBinding(Queue SecondBiQueue, DirectExchange BiExchange) {
+        return BindingBuilder.bind(SecondBiQueue).to(BiExchange).with(MqConstant.BI_SECOND_ROUTING_KEY);
     }
 
 

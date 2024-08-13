@@ -15,6 +15,9 @@ public interface MqConstant {
 
     String BI_DEAD_ROUTING_KEY="bi_dead_routingKey";
 
+    String BI_SECOND_QUEUE_NAME = "bi_second_queue";
+
+    String BI_SECOND_ROUTING_KEY="bi_second_routingKey";
 
     //订单支付队列
     String ORDERS_EXCHANGE_NAME = "orders_exchange";
