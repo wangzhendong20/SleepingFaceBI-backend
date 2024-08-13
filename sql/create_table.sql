@@ -1,10 +1,8 @@
-# 建表脚本
-
 -- 创建库
-create database if not exists ge_bi;
+create database if not exists bi_db;
 
 -- 切换库
-use ge_bi;
+use bi_db;
 
 -- 用户表
 create table if not exists user
