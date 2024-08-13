@@ -16,6 +16,7 @@
 + + [x] 智能数据表格
 + [x] 积分功能
 + [x] SDK开发
++ [x] 重试机制
 + [❌] SleepingFace小助手(waiting)
 + + [x] 大白话->公文(v1.0)
 
@@ -41,7 +42,8 @@
 - spring cloud
 - MySQL
 - Mybatis-Plus及Mybatis X自动生成
-- Redis + redisson 限流
+- Redis
+- redisson 限流
 - RabbitMq
 - Dubbo
 - Nacos
@@ -49,6 +51,7 @@
 - Swagger
 - Easy Excel
 - JDK线程池及异步化
+- Guava
 ### 前端
 ***
 - React 18
@@ -58,7 +61,7 @@
 - Echarts 可视化库
 
 ## TODO:
-+ [x] 目前只使用了redis+redisson做限流，可以考虑使用redis来存储生成的文本数据等，提高加载速度。
++ [x] 目前只使用了redis+redisson做限流，可以考虑使用redis来存储生成的文本数据等，提高加载速度, 同时针对缓存击穿和缓存穿透问题做了相应的处理。
 - 完善登录方式，目前只支持用户名密码登录。(JustAuth)
 - 任务执行的结果情况可以给用户发送实时消息通知而不用刷新页面查看。(Websocket)
 - 考虑负载均衡，提高服务的可用性。
