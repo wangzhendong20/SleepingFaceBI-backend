@@ -168,8 +168,8 @@ public class MqInitMain {
 
 
     @Bean
-    Binding DataDeadBinding(Queue TxtDeadQueue, DirectExchange TxtDeadExchange) {
-        return BindingBuilder.bind(TxtDeadQueue).to(TxtDeadExchange).with(MqConstant.DATA_DEAD_ROUTING_KEY);
+    Binding DataDeadBinding(Queue DataDeadQueue, DirectExchange DataDeadExchange) {
+        return BindingBuilder.bind(DataDeadQueue).to(DataDeadExchange).with(MqConstant.DATA_DEAD_ROUTING_KEY);
     }
 
     /**
@@ -192,8 +192,8 @@ public class MqInitMain {
     }
 
     @Bean
-    Binding DataBinding(Queue TxtQueue, DirectExchange TxtExchange) {
-        return BindingBuilder.bind(TxtQueue).to(TxtExchange).with(MqConstant.DATA_ROUTING_KEY);
+    Binding DataBinding(Queue DataQueue, DirectExchange DataExchange) {
+        return BindingBuilder.bind(DataQueue).to(DataExchange).with(MqConstant.DATA_ROUTING_KEY);
     }
 
     /**
@@ -214,8 +214,8 @@ public class MqInitMain {
 
 
     @Bean
-    Binding DataCleanDeadBinding(Queue TxtDeadQueue, DirectExchange TxtDeadExchange) {
-        return BindingBuilder.bind(TxtDeadQueue).to(TxtDeadExchange).with(MqConstant.DATA_CLEAN_DEAD_ROUTING_KEY);
+    Binding DataCleanDeadBinding(Queue DataCleanDeadQueue, DirectExchange DataCleanDeadExchange) {
+        return BindingBuilder.bind(DataCleanDeadQueue).to(DataCleanDeadExchange).with(MqConstant.DATA_CLEAN_DEAD_ROUTING_KEY);
     }
 
     /**
@@ -238,8 +238,8 @@ public class MqInitMain {
     }
 
     @Bean
-    Binding DataCleanBinding(Queue TxtQueue, DirectExchange TxtExchange) {
-        return BindingBuilder.bind(TxtQueue).to(TxtExchange).with(MqConstant.DATA_CLEAN_ROUTING_KEY);
+    Binding DataCleanBinding(Queue DataCleanQueue, DirectExchange DataCleanExchange) {
+        return BindingBuilder.bind(DataCleanQueue).to(DataCleanExchange).with(MqConstant.DATA_CLEAN_ROUTING_KEY);
     }
 
     /**
@@ -260,8 +260,8 @@ public class MqInitMain {
 
 
     @Bean
-    Binding DataChooseDeadBinding(Queue TxtDeadQueue, DirectExchange TxtDeadExchange) {
-        return BindingBuilder.bind(TxtDeadQueue).to(TxtDeadExchange).with(MqConstant.DATA_CHOOSE_DEAD_ROUTING_KEY);
+    Binding DataChooseDeadBinding(Queue DataChooseDeadQueue, DirectExchange DataChooseDeadExchange) {
+        return BindingBuilder.bind(DataChooseDeadQueue).to(DataChooseDeadExchange).with(MqConstant.DATA_CHOOSE_DEAD_ROUTING_KEY);
     }
 
     /**
@@ -284,8 +284,8 @@ public class MqInitMain {
     }
 
     @Bean
-    Binding DataChooseBinding(Queue TxtQueue, DirectExchange TxtExchange) {
-        return BindingBuilder.bind(TxtQueue).to(TxtExchange).with(MqConstant.DATA_CHOOSE_ROUTING_KEY);
+    Binding DataChooseBinding(Queue DataChooseQueue, DirectExchange DataChooseExchange) {
+        return BindingBuilder.bind(DataChooseQueue).to(DataChooseExchange).with(MqConstant.DATA_CHOOSE_ROUTING_KEY);
     }
 
 
@@ -307,8 +307,8 @@ public class MqInitMain {
 
 
     @Bean
-    Binding DataFormDeadBinding(Queue TxtDeadQueue, DirectExchange TxtDeadExchange) {
-        return BindingBuilder.bind(TxtDeadQueue).to(TxtDeadExchange).with(MqConstant.DATA_FORM_DEAD_ROUTING_KEY);
+    Binding DataFormDeadBinding(Queue DataFormDeadQueue, DirectExchange DataFormDeadExchange) {
+        return BindingBuilder.bind(DataFormDeadQueue).to(DataFormDeadExchange).with(MqConstant.DATA_FORM_DEAD_ROUTING_KEY);
     }
 
     /**
@@ -331,7 +331,7 @@ public class MqInitMain {
     }
 
     @Bean
-    Binding DataFormBinding(Queue TxtQueue, DirectExchange TxtExchange) {
-        return BindingBuilder.bind(TxtQueue).to(TxtExchange).with(MqConstant.DATA_FORM_ROUTING_KEY);
+    Binding DataFormBinding(Queue DataFormQueue, DirectExchange DataFormExchange) {
+        return BindingBuilder.bind(DataFormQueue).to(DataFormExchange).with(MqConstant.DATA_FORM_ROUTING_KEY);
     }
 }
