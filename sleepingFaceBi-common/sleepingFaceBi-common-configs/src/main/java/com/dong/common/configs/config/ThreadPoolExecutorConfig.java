@@ -1,6 +1,6 @@
 package com.dong.common.configs.config;
 
-import com.sun.istack.internal.NotNull;
+import javax.validation.constraints.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -143,7 +143,7 @@ public class MqInitMain {
     Queue SecondBiQueue() {
         // 第二个队列的参数
         Map<String, Object> arg = new HashMap<>();
-        arg.put("x-message-ttl", 6000); // 设置TTL为2min
+        arg.put("x-message-ttl", 6000); // 设置TTL为1min
         // 绑定死信交换机
         arg.put("x-dead-letter-exchange", MqConstant.BI_DEAD_EXCHANGE_NAME);
         arg.put("x-dead-letter-routing-key", MqConstant.BI_DEAD_ROUTING_KEY);
