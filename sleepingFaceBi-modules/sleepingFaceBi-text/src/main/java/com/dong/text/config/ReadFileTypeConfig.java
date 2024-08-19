@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "readfile")
+@ConfigurationProperties(prefix = "readfile.types")
 public class ReadFileTypeConfig {
 
     private Map<String,String> types;
